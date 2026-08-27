@@ -40,14 +40,39 @@ print("Fecha de devolucion (dd/MM/yyyy): ")
 let fechaDevolucionStr = readLine() ?? ""
 let fechaDevolucion = formatter.date(from: fechaDevolucionStr) ?? Date()
 
+// Validar que la fecha de devolucion no supere los dias permitidos
+let calendar = Calendar.current
+let fechaMaximaPermitida = calendar.date(
+    byAdding: .day,
+    value: diasOtorgados,
+    to: fechaPrestamo
+) ?? fechaPrestamo
+
+if fechaDevolucion > fechaMaximaPermitida {
+    print("")
+    print("NO SE PUEDE REALIZAR EL PRESTAMO")
+    print("El tipo de usuario \(tipoUsuario) solo puede tener el libro por \(diasOtorgados) dias.")
+    print("Fecha maxima de devolucion: \(formatter.string(from: fechaMaximaPermitida))")
+    exit(0)
+}
+
 //commit del ingreso de datos
 
 // MARK: - Calculo de fecha limite y dias de atraso
-let calendar = Calendar.current
-let fechaLimite = calendar.date(byAdding: .day, value: diasOtorgados, to: fechaPrestamo) ?? fechaPrestamo
+let fechaLimite = calendar.date(
+    byAdding: .day,
+    value: diasOtorgados,
+    to: fechaPrestamo
+) ?? fechaPrestamo
 
-let diasAtrasoComponents = calendar.dateComponents([.day], from: fechaLimite, to: fechaDevolucion)
+let diasAtrasoComponents = calendar.dateComponents(
+    [.day],
+    from: fechaLimite,
+    to: fechaDevolucion
+)
+
 var diasAtraso = diasAtrasoComponents.day ?? 0
+
 if diasAtraso < 0 {
     diasAtraso = 0
 }
@@ -68,13 +93,16 @@ var multaTotal = 0.0
 
 if diasAtraso > 0 {
     var dia = 1
+
     while dia <= diasAtraso {
         var tarifaDelDia = tasaMulta
+
         if dia >= 4 && dia <= 6 {
             tarifaDelDia = tasaMulta * 1.5
         } else if dia >= 7 {
             tarifaDelDia = tasaMulta * 2.0
         }
+
         multaTotal += tarifaDelDia
         dia += 1
     }
@@ -98,6 +126,7 @@ if diasAtraso == 0 {
 }
 
 var estado = "Devuelto"
+
 if diasAtraso > 0 {
     estado = "Devuelto con atraso"
 }
