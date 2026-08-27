@@ -14,4 +14,5 @@ let extrabajo = Double(readLine() ?? "") ?? 0
 print("Nota del Examen Final : ")
 let exfinal = Double(readLine() ?? "") ?? 0
 //commit del calculo
+let promedioFinal = (exaparcial * parcial) + (extrabajo * trabajo) + (exfinal * final)
 //commit de mostrar los datos
