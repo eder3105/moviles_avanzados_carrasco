@@ -104,3 +104,20 @@ if diasAtraso > 0 {
 
 //commit del calculo
 
+// MARK: - Mostrar resultados
+formatter.dateFormat = "dd/MM/yyyy"
+
+print("")
+print("=== RESUMEN DEL PRESTAMO ===")
+print("Libro: \(titulo)")
+print("Tipo de usuario: \(tipoUsuario)")
+print("Fecha de prestamo: \(formatter.string(from: fechaPrestamo))")
+print("Fecha limite: \(formatter.string(from: fechaLimite))")
+print("Fecha de devolucion: \(formatter.string(from: fechaDevolucion))")
+print("Dias de atraso: \(diasAtraso)")
+print("Multa total: S/ \(multaTotal)")
+print("Estado: \(estado)")
+print("Situacion: \(situacion)")
+print("Usuario habilitado: \(usuarioHabilitado ? "Si" : "No")")
+
+//commit de mostrar los datos
