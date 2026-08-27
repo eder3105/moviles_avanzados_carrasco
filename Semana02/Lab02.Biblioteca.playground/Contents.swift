@@ -31,17 +31,33 @@ if opcion == 1 {
 
 let formatter = DateFormatter()
 formatter.dateFormat = "dd/MM/yyyy"
+formatter.isLenient = false
 
 print("Fecha de prestamo (dd/MM/yyyy): ")
 let fechaPrestamoStr = readLine() ?? ""
-let fechaPrestamo = formatter.date(from: fechaPrestamoStr) ?? Date()
+
+guard fechaPrestamoStr.count == 10,
+      let fechaPrestamo = formatter.date(from: fechaPrestamoStr),
+      formatter.string(from: fechaPrestamo) == fechaPrestamoStr else {
+    
+    print("Fecha de prestamo invalida.")
+    exit(0)
+}
 
 print("Fecha de devolucion (dd/MM/yyyy): ")
 let fechaDevolucionStr = readLine() ?? ""
-let fechaDevolucion = formatter.date(from: fechaDevolucionStr) ?? Date()
+
+guard fechaDevolucionStr.count == 10,
+      let fechaDevolucion = formatter.date(from: fechaDevolucionStr),
+      formatter.string(from: fechaDevolucion) == fechaDevolucionStr else {
+    
+    print("Fecha de devolucion invalida.")
+    exit(0)
+}
 
 // Validar que la fecha de devolucion no supere los dias permitidos
 let calendar = Calendar.current
+
 let fechaMaximaPermitida = calendar.date(
     byAdding: .day,
     value: diasOtorgados,
@@ -93,16 +109,16 @@ var multaTotal = 0.0
 
 if diasAtraso > 0 {
     var dia = 1
-
+    
     while dia <= diasAtraso {
         var tarifaDelDia = tasaMulta
-
+        
         if dia >= 4 && dia <= 6 {
             tarifaDelDia = tasaMulta * 1.5
         } else if dia >= 7 {
             tarifaDelDia = tasaMulta * 2.0
         }
-
+        
         multaTotal += tarifaDelDia
         dia += 1
     }
@@ -134,8 +150,6 @@ if diasAtraso > 0 {
 //commit del calculo
 
 // MARK: - Mostrar resultados
-formatter.dateFormat = "dd/MM/yyyy"
-
 print("")
 print("=== RESUMEN DEL PRESTAMO ===")
 print("Libro: \(titulo)")
