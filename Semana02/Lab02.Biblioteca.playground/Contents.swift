@@ -117,10 +117,17 @@ repeat {
        let fecha = formatter.date(from: fechaTexto),
        formatter.string(from: fecha) == fechaTexto {
 
-        fechaPrestamo = fecha
-        fechaPrestamoValida = true
+        let hoy = Calendar.current.startOfDay(for: Date())
+        let fechaIngresada = Calendar.current.startOfDay(for: fecha)
 
-        print("Fecha registrada: \(formatter.string(from: fechaPrestamo))")
+        if fechaIngresada < hoy {
+            print("Error: La fecha de prestamo no puede ser una fecha pasada.")
+        } else {
+            fechaPrestamo = fecha
+            fechaPrestamoValida = true
+
+            print("Fecha registrada: \(formatter.string(from: fechaPrestamo))")
+        }
 
     } else {
         print("Error: La fecha de prestamo no es valida.")
