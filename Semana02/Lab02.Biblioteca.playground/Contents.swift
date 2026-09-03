@@ -91,19 +91,18 @@ formatter.isLenient = false
 let calendar = Calendar.current
 
 
-// Permite escribir:
-// 03/09/2026
-// o
-// 03092026
+// MARK: - FUNCION PARA FORMATEAR FECHA
 
 func formatearFecha(_ texto: String) -> String {
 
     let textoLimpio = texto.trimmingCharacters(in: .whitespacesAndNewlines)
 
+    // Si ya tiene formato dd/MM/yyyy
     if textoLimpio.count == 10 {
         return textoLimpio
     }
 
+    // Si escribe ddMMyyyy
     if textoLimpio.count == 8,
        textoLimpio.allSatisfy({ $0.isNumber }) {
 
@@ -178,12 +177,13 @@ let fechaLimite = calendar.date(
 ) ?? fechaPrestamo
 
 
-// MARK: - INFORMACION DEL PRESTAMO
+// MARK: - MOSTRAR DATOS DEL PRESTAMO
 
 print("")
 print("=== PRESTAMO REGISTRADO ===")
 print("Libro: \(titulo)")
 print("Tipo de usuario: \(tipoUsuario)")
+print("Tarifa base: S/ \(String(format: "%.2f", tasaMulta))")
 print("Dias permitidos: \(diasOtorgados)")
 print("Fecha de prestamo: \(formatter.string(from: fechaPrestamo))")
 print("Fecha limite de devolucion: \(formatter.string(from: fechaLimite))")
@@ -242,42 +242,80 @@ if diasAtraso < 0 {
 }
 
 
-// MARK: - CALCULO DE MULTA
+// MARK: - CALCULO DE MULTA Y CALENDARIO DIARIO
 
 var multaTotal = 0.0
 
-if diasAtraso > 0 {
+print("")
+print("=== CALENDARIO DE MULTAS ===")
+
+if diasAtraso == 0 {
+
+    print("No existen dias de atraso.")
+    print("El libro fue devuelto dentro del plazo establecido.")
+
+} else {
 
     var dia = 1
 
-    while dia <= diasAtraso {
+    // Solo se calcula multa hasta el dia 20.
+    // Desde el dia 21 el usuario queda suspendido.
+    let diasParaCalcular = min(diasAtraso, 20)
+
+    while dia <= diasParaCalcular {
 
         var tarifaDelDia = 0.0
+        var porcentaje = "0%"
 
-        // 1 a 3 dias: no paga
+        // Dias 1 al 3: no paga
         if dia <= 3 {
 
             tarifaDelDia = 0.0
+            porcentaje = "0%"
 
-        // 4 a 6 dias: paga 25%
+        // Dias 4 al 6: tarifa base + 25%
         } else if dia <= 6 {
 
-            tarifaDelDia = tasaMulta * 0.25
+            tarifaDelDia = tasaMulta + (tasaMulta * 0.25)
+            porcentaje = "+25%"
 
-        // 7 a 10 dias: paga 50%
+        // Dias 7 al 10: tarifa base + 50%
         } else if dia <= 10 {
 
-            tarifaDelDia = tasaMulta * 0.50
+            tarifaDelDia = tasaMulta + (tasaMulta * 0.50)
+            porcentaje = "+50%"
 
-        // 11 dias en adelante: paga 100%
+        // Dias 11 al 20: tarifa base + 100%
         } else {
 
-            tarifaDelDia = tasaMulta
+            tarifaDelDia = tasaMulta + (tasaMulta * 1.00)
+            porcentaje = "+100%"
         }
+
+        // Calcular la fecha correspondiente al dia de atraso
+        let fechaDiaAtraso = calendar.date(
+            byAdding: .day,
+            value: dia,
+            to: fechaLimite
+        ) ?? fechaLimite
 
         multaTotal += tarifaDelDia
 
+        print(
+            "Dia \(dia) | " +
+            "\(formatter.string(from: fechaDiaAtraso)) | " +
+            "\(porcentaje) | " +
+            "S/ \(String(format: "%.2f", tarifaDelDia))"
+        )
+
         dia += 1
+    }
+
+    // Si tiene 21 dias o mas
+    if diasAtraso >= 21 {
+
+        print("")
+        print("Dia 21 en adelante: USUARIO SUSPENDIDO")
     }
 }
 
@@ -297,15 +335,15 @@ if diasAtraso == 0 {
 
 } else if diasAtraso <= 6 {
 
-    situacion = "Atraso con multa del 25%"
+    situacion = "Atraso con recargo del 25%"
 
 } else if diasAtraso <= 10 {
 
-    situacion = "Atraso con multa del 50%"
+    situacion = "Atraso con recargo del 50%"
 
 } else if diasAtraso <= 20 {
 
-    situacion = "Atraso con multa del 100%"
+    situacion = "Atraso con recargo del 100%"
 
 } else {
 
@@ -330,6 +368,7 @@ print("=== RESUMEN DEL PRESTAMO ===")
 
 print("Libro: \(titulo)")
 print("Tipo de usuario: \(tipoUsuario)")
+print("Tarifa base: S/ \(String(format: "%.2f", tasaMulta))")
 print("Dias permitidos: \(diasOtorgados)")
 
 print("Fecha de prestamo: \(formatter.string(from: fechaPrestamo))")
