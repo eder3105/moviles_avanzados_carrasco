@@ -1,24 +1,28 @@
 import Foundation
 
-// MARK: - Ingreso de datos
+// MARK: - SISTEMA DE PRESTAMO DE LIBROS
 
 print("=== SISTEMA DE PRESTAMO DE LIBROS ===")
 
-// Validar titulo
+
+// MARK: - INGRESO Y VALIDACION DEL TITULO
+
 var titulo = ""
 
 repeat {
-    print("Titulo del libro: ")
+    print("Titulo del libro:")
     titulo = readLine() ?? ""
 
     if titulo.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
         print("Error: El titulo del libro no puede estar vacio.")
+        print("")
     }
 
 } while titulo.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
 
 
-// Validar tipo de usuario
+// MARK: - SELECCION Y VALIDACION DEL USUARIO
+
 print("")
 print("Seleccione tipo de usuario:")
 print("1. Alumno")
@@ -29,7 +33,8 @@ print("4. Coordinador")
 var opcion = 0
 
 repeat {
-    print("Ingrese una opcion del 1 al 4: ")
+
+    print("Ingrese una opcion del 1 al 4:")
 
     if let entrada = readLine(),
        let numero = Int(entrada),
@@ -39,55 +44,78 @@ repeat {
 
     } else {
         print("Error: Ese tipo de usuario no existe.")
+        print("")
     }
 
 } while opcion < 1 || opcion > 4
 
 
+// MARK: - DATOS SEGUN TIPO DE USUARIO
+
 var tipoUsuario = ""
 var diasOtorgados = 0
+var tasaMulta = 0.0
 
 if opcion == 1 {
+
     tipoUsuario = "Alumno"
     diasOtorgados = 7
+    tasaMulta = 1.5
 
 } else if opcion == 2 {
+
     tipoUsuario = "Docente"
     diasOtorgados = 15
+    tasaMulta = 2.0
 
 } else if opcion == 3 {
+
     tipoUsuario = "Administrativo"
     diasOtorgados = 10
+    tasaMulta = 3.0
 
 } else if opcion == 4 {
+
     tipoUsuario = "Coordinador"
     diasOtorgados = 15
+    tasaMulta = 4.0
 }
 
 
-// MARK: - Configuracion de fechas
+// MARK: - CONFIGURACION DE FECHAS
 
 let formatter = DateFormatter()
 formatter.dateFormat = "dd/MM/yyyy"
 formatter.isLenient = false
 
+let calendar = Calendar.current
 
-// Funcion para agregar "/" si el usuario escribe ddMMyyyy
+
+// Permite escribir:
+// 03/09/2026
+// o
+// 03092026
+
 func formatearFecha(_ texto: String) -> String {
 
     let textoLimpio = texto.trimmingCharacters(in: .whitespacesAndNewlines)
 
-    // Si ya tiene el formato dd/MM/yyyy
     if textoLimpio.count == 10 {
         return textoLimpio
     }
 
-    // Si escribe solamente 8 numeros: ddMMyyyy
     if textoLimpio.count == 8,
        textoLimpio.allSatisfy({ $0.isNumber }) {
 
-        let indiceDia = textoLimpio.index(textoLimpio.startIndex, offsetBy: 2)
-        let indiceMes = textoLimpio.index(textoLimpio.startIndex, offsetBy: 4)
+        let indiceDia = textoLimpio.index(
+            textoLimpio.startIndex,
+            offsetBy: 2
+        )
+
+        let indiceMes = textoLimpio.index(
+            textoLimpio.startIndex,
+            offsetBy: 4
+        )
 
         let dia = textoLimpio[..<indiceDia]
         let mes = textoLimpio[indiceDia..<indiceMes]
@@ -100,7 +128,7 @@ func formatearFecha(_ texto: String) -> String {
 }
 
 
-// MARK: - Fecha de prestamo
+// MARK: - FECHA DE PRESTAMO
 
 var fechaPrestamo = Date()
 var fechaPrestamoValida = false
@@ -108,7 +136,7 @@ var fechaPrestamoValida = false
 repeat {
 
     print("")
-    print("Fecha de prestamo (dd/MM/yyyy): ")
+    print("Fecha de prestamo (dd/MM/yyyy):")
 
     let entrada = readLine() ?? ""
     let fechaTexto = formatearFecha(entrada)
@@ -117,12 +145,15 @@ repeat {
        let fecha = formatter.date(from: fechaTexto),
        formatter.string(from: fecha) == fechaTexto {
 
-        let hoy = Calendar.current.startOfDay(for: Date())
-        let fechaIngresada = Calendar.current.startOfDay(for: fecha)
+        let hoy = calendar.startOfDay(for: Date())
+        let fechaIngresada = calendar.startOfDay(for: fecha)
 
         if fechaIngresada < hoy {
+
             print("Error: La fecha de prestamo no puede ser una fecha pasada.")
+
         } else {
+
             fechaPrestamo = fecha
             fechaPrestamoValida = true
 
@@ -130,14 +161,35 @@ repeat {
         }
 
     } else {
-        print("Error: La fecha de prestamo no es valida.")
+
+        print("Error: La fecha ingresada no existe o tiene un formato incorrecto.")
         print("Ejemplo correcto: 03/09/2026")
     }
 
 } while !fechaPrestamoValida
 
 
-// MARK: - Fecha de devolucion
+// MARK: - CALCULAR FECHA LIMITE
+
+let fechaLimite = calendar.date(
+    byAdding: .day,
+    value: diasOtorgados,
+    to: fechaPrestamo
+) ?? fechaPrestamo
+
+
+// MARK: - INFORMACION DEL PRESTAMO
+
+print("")
+print("=== PRESTAMO REGISTRADO ===")
+print("Libro: \(titulo)")
+print("Tipo de usuario: \(tipoUsuario)")
+print("Dias permitidos: \(diasOtorgados)")
+print("Fecha de prestamo: \(formatter.string(from: fechaPrestamo))")
+print("Fecha limite de devolucion: \(formatter.string(from: fechaLimite))")
+
+
+// MARK: - FECHA REAL DE DEVOLUCION
 
 var fechaDevolucion = Date()
 var fechaDevolucionValida = false
@@ -145,7 +197,7 @@ var fechaDevolucionValida = false
 repeat {
 
     print("")
-    print("Fecha de devolucion (dd/MM/yyyy): ")
+    print("Fecha real de devolucion (dd/MM/yyyy):")
 
     let entrada = readLine() ?? ""
     let fechaTexto = formatearFecha(entrada)
@@ -168,43 +220,14 @@ repeat {
 
     } else {
 
-        print("Error: La fecha de devolucion no es valida.")
-        print("Ejemplo correcto: 10/09/2026")
+        print("Error: La fecha ingresada no existe o tiene un formato incorrecto.")
+        print("Ejemplo correcto: 15/09/2026")
     }
 
 } while !fechaDevolucionValida
 
 
-// Validar que la fecha de devolucion no supere los dias permitidos
-
-let calendar = Calendar.current
-
-let fechaMaximaPermitida = calendar.date(
-    byAdding: .day,
-    value: diasOtorgados,
-    to: fechaPrestamo
-) ?? fechaPrestamo
-
-if fechaDevolucion > fechaMaximaPermitida {
-
-    print("")
-    print("NO SE PUEDE REALIZAR EL PRESTAMO")
-    print("El tipo de usuario \(tipoUsuario) solo puede tener el libro por \(diasOtorgados) dias.")
-    print("Fecha maxima de devolucion: \(formatter.string(from: fechaMaximaPermitida))")
-
-    exit(0)
-}
-
-// commit del ingreso de datos
-
-
-// MARK: - Calculo de fecha limite y dias de atraso
-
-let fechaLimite = calendar.date(
-    byAdding: .day,
-    value: diasOtorgados,
-    to: fechaPrestamo
-) ?? fechaPrestamo
+// MARK: - CALCULAR DIAS DE ATRASO
 
 let diasAtrasoComponents = calendar.dateComponents(
     [.day],
@@ -219,25 +242,7 @@ if diasAtraso < 0 {
 }
 
 
-// MARK: - Tarifa de multa segun tipo de usuario
-
-var tasaMulta = 0.0
-
-if tipoUsuario == "Alumno" {
-    tasaMulta = 1.5
-
-} else if tipoUsuario == "Docente" {
-    tasaMulta = 2.0
-
-} else if tipoUsuario == "Administrativo" {
-    tasaMulta = 3.0
-
-} else if tipoUsuario == "Coordinador" {
-    tasaMulta = 4.0
-}
-
-
-// MARK: - Multa progresiva, dia por dia
+// MARK: - CALCULO DE MULTA
 
 var multaTotal = 0.0
 
@@ -247,22 +252,37 @@ if diasAtraso > 0 {
 
     while dia <= diasAtraso {
 
-        var tarifaDelDia = tasaMulta
+        var tarifaDelDia = 0.0
 
-        if dia >= 4 && dia <= 6 {
-            tarifaDelDia = tasaMulta * 1.5
+        // 1 a 3 dias: no paga
+        if dia <= 3 {
 
-        } else if dia >= 7 {
-            tarifaDelDia = tasaMulta * 2.0
+            tarifaDelDia = 0.0
+
+        // 4 a 6 dias: paga 25%
+        } else if dia <= 6 {
+
+            tarifaDelDia = tasaMulta * 0.25
+
+        // 7 a 10 dias: paga 50%
+        } else if dia <= 10 {
+
+            tarifaDelDia = tasaMulta * 0.50
+
+        // 11 dias en adelante: paga 100%
+        } else {
+
+            tarifaDelDia = tasaMulta
         }
 
         multaTotal += tarifaDelDia
+
         dia += 1
     }
 }
 
 
-// MARK: - Situacion y estado
+// MARK: - SITUACION DEL USUARIO
 
 var situacion = ""
 var usuarioHabilitado = true
@@ -273,15 +293,19 @@ if diasAtraso == 0 {
 
 } else if diasAtraso <= 3 {
 
-    situacion = "Atraso leve"
+    situacion = "Atraso sin multa"
 
 } else if diasAtraso <= 6 {
 
-    situacion = "Atraso moderado"
+    situacion = "Atraso con multa del 25%"
 
-} else if diasAtraso <= 9 {
+} else if diasAtraso <= 10 {
 
-    situacion = "Atraso grave"
+    situacion = "Atraso con multa del 50%"
+
+} else if diasAtraso <= 20 {
+
+    situacion = "Atraso con multa del 100%"
 
 } else {
 
@@ -290,28 +314,31 @@ if diasAtraso == 0 {
 }
 
 
+// MARK: - ESTADO DEL PRESTAMO
+
 var estado = "Devuelto"
 
 if diasAtraso > 0 {
     estado = "Devuelto con atraso"
 }
 
-// commit del calculo
 
-
-// MARK: - Mostrar resultados
+// MARK: - MOSTRAR RESULTADOS
 
 print("")
 print("=== RESUMEN DEL PRESTAMO ===")
+
 print("Libro: \(titulo)")
 print("Tipo de usuario: \(tipoUsuario)")
+print("Dias permitidos: \(diasOtorgados)")
+
 print("Fecha de prestamo: \(formatter.string(from: fechaPrestamo))")
 print("Fecha limite: \(formatter.string(from: fechaLimite))")
-print("Fecha de devolucion: \(formatter.string(from: fechaDevolucion))")
+print("Fecha real de devolucion: \(formatter.string(from: fechaDevolucion))")
+
 print("Dias de atraso: \(diasAtraso)")
 print("Multa total: S/ \(String(format: "%.2f", multaTotal))")
+
 print("Estado: \(estado)")
 print("Situacion: \(situacion)")
 print("Usuario habilitado: \(usuarioHabilitado ? "Si" : "No")")
-
-// commit de mostrar los datos
