@@ -24,15 +24,16 @@ print("Seleccione tipo de usuario:")
 print("1. Alumno")
 print("2. Docente")
 print("3. Administrativo")
+print("4. Coordinador")
 
 var opcion = 0
 
 repeat {
-    print("Ingrese una opcion del 1 al 3: ")
+    print("Ingrese una opcion del 1 al 4: ")
 
     if let entrada = readLine(),
        let numero = Int(entrada),
-       numero >= 1 && numero <= 3 {
+       numero >= 1 && numero <= 4 {
 
         opcion = numero
 
@@ -40,7 +41,7 @@ repeat {
         print("Error: Ese tipo de usuario no existe.")
     }
 
-} while opcion < 1 || opcion > 3
+} while opcion < 1 || opcion > 4
 
 
 var tipoUsuario = ""
@@ -57,6 +58,10 @@ if opcion == 1 {
 } else if opcion == 3 {
     tipoUsuario = "Administrativo"
     diasOtorgados = 10
+
+} else if opcion == 4 {
+    tipoUsuario = "Coordinador"
+    diasOtorgados = 15
 }
 
 
@@ -219,6 +224,9 @@ if tipoUsuario == "Alumno" {
 
 } else if tipoUsuario == "Administrativo" {
     tasaMulta = 3.0
+
+} else if tipoUsuario == "Coordinador" {
+    tasaMulta = 4.0
 }
 
 
