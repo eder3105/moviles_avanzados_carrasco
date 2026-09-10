@@ -186,3 +186,78 @@ func planearRuta(_ origenEntrada: String, _ destinoEntrada: String) {
         print("Dato extra: \(destino.nombre) conecta con el Metropolitano → \(conexion)")
     }
 }
+// ===== INTERFAZ DE CONSOLA =====
+func lineaSeparadora() {
+    print(String(repeating: "─", count: 50))
+}
+
+func mostrarMenu() {
+    print("""
+    
+    ┌─────────────────────────────────────────┐
+    │        METRO DE LIMA · CONSOLA          │
+    └─────────────────────────────────────────┘
+      🚉  1 · Estaciones por línea
+      🔍  2 · Buscar una estación
+      🔄  3 · Conexiones con el Metropolitano
+      🗺️  4 · Planear ruta entre dos estaciones
+      🚪  5 · Salir
+    -------------------------------------------
+    """)
+    print("   Elige una opción ➜ ", terminator: "")
+}
+
+// ===== MENÚ PRINCIPAL =====
+var opcion = ""
+repeat {
+    mostrarMenu()
+    opcion = readLine() ?? ""
+
+    switch opcion {
+    case "1":
+        lineaSeparadora()
+        print("   ¿Qué línea deseas consultar? (Línea 1 / Línea 2 / Línea 3)")
+        print("   ➤ ", terminator: "")
+        let linea = readLine() ?? ""
+        lineaSeparadora()
+        mostrarEstacionesDeLinea(linea)
+        lineaSeparadora()
+
+    case "2":
+        lineaSeparadora()
+        print("   Escribe el nombre de la estación:")
+        print("   ➤ ", terminator: "")
+        let nombre = readLine() ?? ""
+        lineaSeparadora()
+        buscarInfoEstacion(nombre)
+        lineaSeparadora()
+
+    case "3":
+        lineaSeparadora()
+        print("   🔄  CONEXIONES CON EL METROPOLITANO")
+        lineaSeparadora()
+        for (estacionMetro, conexion) in conexionesMetropolitano {
+            print("   • \(estacionMetro) → \(conexion)")
+        }
+        lineaSeparadora()
+
+    case "4":
+        lineaSeparadora()
+        print("   Estación de ORIGEN:")
+        print("   ➤ ", terminator: "")
+        let origen = readLine() ?? ""
+        print("   Estación de DESTINO:")
+        print("   ➤ ", terminator: "")
+        let destino = readLine() ?? ""
+        lineaSeparadora()
+        planearRuta(origen, destino)
+        lineaSeparadora()
+
+    case "5":
+        print("\n   ¡Gracias por usar el sistema! 👋\n")
+
+    default:
+        print("\n   ⚠️  Opción no válida, intenta de nuevo.\n")
+    }
+
+} while opcion != "5"
