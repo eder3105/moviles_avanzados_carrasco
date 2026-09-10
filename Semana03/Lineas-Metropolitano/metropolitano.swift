@@ -147,3 +147,42 @@ func buscarInfoEstacion(_ entrada: String) {
         print("Estación no encontrada en la base de datos.")
     }
 }
+// ===== PLANIFICADOR DE RUTAS =====
+func planearRuta(_ origenEntrada: String, _ destinoEntrada: String) {
+    let claveOrigen = normalizar(origenEntrada)
+    let claveDestino = normalizar(destinoEntrada)
+
+    guard let nombreOrigen = estacionesNormalizadas[claveOrigen],
+          let origen = detalleEstaciones[nombreOrigen] else {
+        print("No se encontró la estación de origen.")
+        return
+    }
+    guard let nombreDestino = estacionesNormalizadas[claveDestino],
+          let destino = detalleEstaciones[nombreDestino] else {
+        print("No se encontró la estación de destino.")
+        return
+    }
+
+    if origen.linea == destino.linea {
+        print("Toma la \(origen.linea) directamente: \(origen.nombre) → \(destino.nombre)")
+    } else {
+        var transbordoEncontrado = false
+        for (estacion, descripcion) in interconexionesEntreLineas {
+            if descripcion.contains(origen.linea) && descripcion.contains(destino.linea) {
+                print("Ruta sugerida:")
+                print("  1. Toma \(origen.linea) desde \(origen.nombre) hasta \(estacion)")
+                print("  2. Haz transbordo en \(estacion)")
+                print("  3. Continúa en \(destino.linea) hasta \(destino.nombre)")
+                transbordoEncontrado = true
+                break
+            }
+        }
+        if !transbordoEncontrado {
+            print("No hay un transbordo directo conocido entre \(origen.linea) y \(destino.linea) en este sistema.")
+        }
+    }
+
+    if let conexion = destino.conectaMetropolitano {
+        print("Dato extra: \(destino.nombre) conecta con el Metropolitano → \(conexion)")
+    }
+}
