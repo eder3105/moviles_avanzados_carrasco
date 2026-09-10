@@ -94,3 +94,27 @@ let detalleEstaciones: [String: Estacion] = [
     "Los Héroes": Estacion(nombre: "Los Héroes", linea: "Línea 3", tieneAscensor: true, viasCercanas: ["Av. Los Héroes", "Santiago de Surco"], conectaMetropolitano: nil),
     "Pedro Miotta": Estacion(nombre: "Pedro Miotta", linea: "Línea 3", tieneAscensor: true, viasCercanas: ["San Juan de Miraflores"], conectaMetropolitano: nil)
 ]
+// ===== DICCIONARIO 3: Conexiones con el Metropolitano =====
+let conexionesMetropolitano: [String: String] = [
+    "La Cultura": "Estación Corpac (Metropolitano) — Línea 1",
+    "Naranjal": "Estación Naranjal (Metropolitano) — Línea 3 (proyecto)",
+    "Tomás Valle": "Estación Tomás Valle (Metropolitano) — Línea 3 (proyecto)",
+    "Estación Central": "Estación Central (Metropolitano) — Línea 2 y Línea 3 (proyecto)",
+    "República de Panamá": "Estación Panamá (Metropolitano) — Línea 3 (proyecto)"
+]
+
+// ===== DICCIONARIO ADICIONAL: Interconexiones entre líneas =====
+let interconexionesEntreLineas: [String: String] = [
+    "Estación Central": "Interconexión entre Línea 2 y Línea 3",
+    "Cabitos / Cabitos (L3)": "Interconexión entre Línea 1 y Línea 3"
+]
+
+// ===== FUNCIÓN CLAVE: Normalizar texto para búsquedas flexibles =====
+func normalizar(_ texto: String) -> String {
+    let sinTildes = texto.folding(options: .diacriticInsensitive, locale: .current)
+    return sinTildes.lowercased().replacingOccurrences(of: " ", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+}
+
+// Diccionarios normalizados
+let lineasNormalizadas: [String: String] = Dictionary(uniqueKeysWithValues: estacionesPorLinea.keys.map { (normalizar($0), $0) })
+let estacionesNormalizadas: [String: String] = Dictionary(uniqueKeysWithValues: detalleEstaciones.keys.map { (normalizar($0), $0) })
