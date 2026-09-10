@@ -118,3 +118,32 @@ func normalizar(_ texto: String) -> String {
 // Diccionarios normalizados
 let lineasNormalizadas: [String: String] = Dictionary(uniqueKeysWithValues: estacionesPorLinea.keys.map { (normalizar($0), $0) })
 let estacionesNormalizadas: [String: String] = Dictionary(uniqueKeysWithValues: detalleEstaciones.keys.map { (normalizar($0), $0) })
+// ===== FUNCIONES DE CONSULTA =====
+func mostrarEstacionesDeLinea(_ entrada: String) {
+    let clave = normalizar(entrada)
+    if let lineaReal = lineasNormalizadas[clave], let estaciones = estacionesPorLinea[lineaReal] {
+        print("Estaciones de \(lineaReal):")
+        for estacion in estaciones {
+            print("  - \(estacion)")
+        }
+    } else {
+        print("Línea no encontrada. Prueba escribiendo: Línea 1, Línea 2 o Línea 3")
+    }
+}
+
+func buscarInfoEstacion(_ entrada: String) {
+    let clave = normalizar(entrada)
+    if let nombreReal = estacionesNormalizadas[clave], let info = detalleEstaciones[nombreReal] {
+        print("Estación: \(info.nombre)")
+        print("Línea: \(info.linea)")
+        print("¿Tiene ascensor?: \(info.tieneAscensor ? "Sí" : "No")")
+        print("Vías cercanas: \(info.viasCercanas.joined(separator: ", "))")
+        if let conexion = info.conectaMetropolitano {
+            print("Conexión Metropolitano: \(conexion)")
+        } else {
+            print("No conecta directamente con el Metropolitano.")
+        }
+    } else {
+        print("Estación no encontrada en la base de datos.")
+    }
+}
