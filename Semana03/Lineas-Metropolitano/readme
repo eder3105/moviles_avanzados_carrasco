@@ -1,0 +1,32 @@
+# Sistema de Información - Metro de Lima
+
+Herramienta de consola desarrollada en Swift que facilita la consulta de datos referentes a las líneas, sus respectivas estaciones y los enlaces entre el Metro de Lima y el Metropolitano.
+
+## Requerimientos Funcionales
+
+1. RF01 - Consultar estaciones por línea: Permite al usuario introducir el nombre de una línea específica (Línea 1, Línea 2 o Línea 3) para visualizar de forma ordenada el listado completo de estaciones que la conforman.
+2. RF02 - Consultar información detallada de una estación: Ofrece la opción de buscar una estación por su nombre para obtener los siguientes detalles:
+   - La línea a la que se encuentra asociada
+   - La disponibilidad de ascensor en términos de accesibilidad
+   - Las avenidas y vías próximas a la ubicación
+   - La existencia o ausencia de conexión directa con el Metropolitano
+3. RF03 - Consultar conexiones con el Metropolitano: Presenta un inventario con todas las estaciones del Metro que cuentan con enlace hacia el sistema del Metropolitano, especificando la estación de correspondencia.
+4. RF04 - Búsqueda flexible (tolerante a formato de entrada): Procesa las solicitudes independientemente de las mayúsculas, minúsculas, espacios o tildes ingresadas (por ejemplo, entradas como "linea2", "Línea 2" y "LINEA 2" entregan un resultado idéntico).
+5. RF05 - Menú interactivo por consola: Despliega un menú principal de opciones para que el usuario ejecute acciones de manera continua hasta que decida finalizar, manejando entradas incorrectas sin interrumpir el funcionamiento de la aplicación.
+
+## Estructura de datos utilizada
+
+- 31 estaciones en total con carácter real y operativo: Divididas en 26 para la Línea 1 y 5 para la Línea 2.
+- 28 estaciones correspondientes al proyecto de la Línea 3 (fase de planificación, basadas en datos oficiales proporcionados por el MTC y la ATU).
+- 4 diccionarios específicos (estacionesPorLinea, detalleEstaciones, conexionesMetropolitano, además de las variantes normalizadas para permitir la búsqueda flexible).
+- 1 estructura o struct (Estacion) para estructurar los atributos de cada estación.
+
+## Cómo ejecutar
+
+swift metropolitano.swift
+
+## Fuente de datos
+Las estaciones y conexiones se fundamentan en registros públicos correspondientes al Metro de Lima y Callao (para las líneas 1 y 2 en funcionamiento) y en el proyecto oficial de la Línea 3 emitido por el MTC/ATU. Cabe destacar que los datos sobre accesibilidad mediante ascensores y vías cercanas son simulados con fines puramente académicos, ya que no existe un repositorio público oficial detallado por cada estación.
+
+## Herramienta de IA utilizada
+[Claude / ChatGPT / la que corresponda]
