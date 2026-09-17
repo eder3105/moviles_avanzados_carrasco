@@ -10,7 +10,9 @@ struct Estacion {
 }
 
 // ===== DICCIONARIO 1: Estaciones por línea =====
-let estacionesPorLinea: [String: [String]] = [
+// ★ Ahora es "var" (antes "let") porque el admin necesita poder
+// agregar estaciones nuevas o crear líneas nuevas en tiempo de ejecución.
+var estacionesPorLinea: [String: [String]] = [
     "Línea 1": ["Villa El Salvador", "Parque Industrial", "Pumacahua", "Villa María",
                  "María Auxiliadora", "San Juan", "Atocongo", "Jorge Chávez", "Ayacucho",
                  "Cabitos", "Angamos", "San Borja Sur", "La Cultura", "Arriola", "Gamarra",
@@ -30,7 +32,8 @@ let estacionesPorLinea: [String: [String]] = [
 ]
 
 // ===== DICCIONARIO 2: Detalle completo de cada estación =====
-let detalleEstaciones: [String: Estacion] = [
+// ★ "var" en vez de "let" por el mismo motivo (admin agrega/edita).
+var detalleEstaciones: [String: Estacion] = [
     // ---------- LÍNEA 1 ----------
     "Villa El Salvador": Estacion(nombre: "Villa El Salvador", linea: "Línea 1", tieneAscensor: true, viasCercanas: ["Av. Pastor Sevilla"], conectaMetropolitano: nil),
     "Parque Industrial": Estacion(nombre: "Parque Industrial", linea: "Línea 1", tieneAscensor: true, viasCercanas: ["Av. Los Héroes"], conectaMetropolitano: nil),
@@ -96,7 +99,7 @@ let detalleEstaciones: [String: Estacion] = [
 ]
 
 // ===== DICCIONARIO 3: Conexiones con el Metropolitano =====
-let conexionesMetropolitano: [String: String] = [
+var conexionesMetropolitano: [String: String] = [
     "La Cultura": "Estación Corpac (Metropolitano) — Línea 1",
     "Naranjal": "Estación Naranjal (Metropolitano) — Línea 3 (proyecto)",
     "Tomás Valle": "Estación Tomás Valle (Metropolitano) — Línea 3 (proyecto)",
@@ -110,6 +113,70 @@ let interconexionesEntreLineas: [String: String] = [
     "Cabitos / Cabitos (L3)": "Interconexión entre Línea 1 y Línea 3"
 ]
 
+// ============================================================
+// ★★★ NUEVO 1: PUNTOS DE INTERÉS CERCANOS A CADA ESTACIÓN ★★★
+// Pedido del docente: "qué encuentra la gente al llegar a una estación".
+// Es un diccionario aparte (no se tocó el struct Estacion) para no
+// reescribir las 59 estaciones ya existentes. Está simulado con fines
+// académicos, igual que los ascensores y las vías cercanas.
+// El admin puede agregar más puntos desde el modo administrador.
+// ============================================================
+var puntosDeInteresPorEstacion: [String: [String]] = [
+    "La Cultura": ["Museo de la Nación", "Universidad Ricardo Palma"],
+    "Angamos": ["Real Plaza Primavera", "Clínica Angamos"],
+    "Gamarra": ["Emporio Comercial Gamarra"],
+    "Tacna": ["Hospital 2 de Mayo", "Parque de la Muralla"],
+    "Huaca Pucllana": ["Huaca Pucllana (sitio arqueológico)", "Óvalo Gutiérrez"],
+    "Parque Central de Miraflores": ["Parque Kennedy", "Municipalidad de Miraflores"],
+    "Estación Central": ["Palacio de Justicia", "Parque Universitario"],
+    "Óvalo Santa Anita": ["Mercado Mayorista de Santa Anita"],
+    "San Borja Sur": ["Centro Comercial San Borja Plaza"],
+    "Caja de Agua": ["Hospital de San Juan de Lurigancho"]
+]
+
+// ============================================================
+// ★★★ NUEVO 2: TIEMPO ENTRE ESTACIONES CONSECUTIVAS ★★★
+// Pedido del docente: "cuánto me falta para llegar a la siguiente estación".
+// Clave = "EstacionOrigen-EstacionSiguiente", valor = minutos.
+// Si un tramo no está en el diccionario, se simula con 3 minutos por
+// defecto (mismo criterio que los datos simulados de ascensores).
+// ============================================================
+var tiemposEntreEstaciones: [String: Int] = [
+    "Villa El Salvador-Parque Industrial": 2,
+    "Parque Industrial-Pumacahua": 2,
+    "La Cultura-Arriola": 3,
+    "Angamos-San Borja Sur": 2,
+    "Estación Central-Parque de la Reserva": 2
+]
+let minutosPorDefecto = 3 // tramo simulado cuando no hay dato específico
+
+// ============================================================
+// ★★★ NUEVO 3 (parte A): TARJETA DE TRANSPORTE ★★★
+// Simula saldo, recarga y cobro de pasaje.
+// ============================================================
+class TarjetaTransporte {
+    private(set) var saldo: Double
+    let tarifa: Double = 2.50 // tarifa fija simulada del pasaje
+
+    init(saldoInicial: Double = 5.0) {
+        self.saldo = saldoInicial
+    }
+
+    func recargar(monto: Double) {
+        saldo += monto
+    }
+
+    // Devuelve true si el cobro fue exitoso (había saldo suficiente)
+    func pagarPasaje() -> Bool {
+        if saldo >= tarifa {
+            saldo -= tarifa
+            return true
+        }
+        return false
+    }
+}
+var tarjetaUsuario = TarjetaTransporte() // instancia global simulada
+
 // ===== FUNCIÓN CLAVE: Normalizar texto para búsquedas flexibles =====
 func normalizar(_ texto: String) -> String {
     let sinTildes = texto.folding(options: .diacriticInsensitive, locale: .current)
@@ -117,23 +184,28 @@ func normalizar(_ texto: String) -> String {
 }
 
 // Diccionarios normalizados
-let lineasNormalizadas: [String: String] = Dictionary(uniqueKeysWithValues: estacionesPorLinea.keys.map { (normalizar($0), $0) })
-let estacionesNormalizadas: [String: String] = Dictionary(uniqueKeysWithValues: detalleEstaciones.keys.map { (normalizar($0), $0) })
+// ★ Ahora son "var" y se recalculan con actualizarNormalizados()
+// cada vez que el admin agrega una línea o estación nueva.
+var lineasNormalizadas: [String: String] = Dictionary(uniqueKeysWithValues: estacionesPorLinea.keys.map { (normalizar($0), $0) })
+var estacionesNormalizadas: [String: String] = Dictionary(uniqueKeysWithValues: detalleEstaciones.keys.map { (normalizar($0), $0) })
+
+// ★ NUEVO: recalcula los diccionarios normalizados tras un cambio del admin
+func actualizarNormalizados() {
+    lineasNormalizadas = Dictionary(uniqueKeysWithValues: estacionesPorLinea.keys.map { (normalizar($0), $0) })
+    estacionesNormalizadas = Dictionary(uniqueKeysWithValues: detalleEstaciones.keys.map { (normalizar($0), $0) })
+}
 
 // ===== FUNCIONES DE SELECCIÓN GUIADA =====
 func seleccionarLinea() -> String? {
     print("\n  ¿A qué línea pertenece?")
-    print("    1 · Línea 1")
-    print("    2 · Línea 2")
-    print("    3 · Línea 3 (Proyecto)")
+    let lineasDisponibles = Array(estacionesPorLinea.keys) // ★ ahora dinámico (por si el admin crea líneas nuevas)
+    for (i, l) in lineasDisponibles.enumerated() {
+        print("    \(i + 1) · \(l)")
+    }
     print("  ➤ ", terminator: "")
-    
-    let opcion = readLine() ?? ""
-    switch opcion {
-    case "1": return "Línea 1"
-    case "2": return "Línea 2"
-    case "3": return "Línea 3"
-    default:
+    if let entrada = readLine(), let indice = Int(entrada), indice >= 1, indice <= lineasDisponibles.count {
+        return lineasDisponibles[indice - 1]
+    } else {
         print("  ⚠️ Línea no válida.")
         return nil
     }
@@ -144,7 +216,6 @@ func seleccionarEstacion(titulo: String) -> String? {
     guard let linea = seleccionarLinea(), let estaciones = estacionesPorLinea[linea] else {
         return nil
     }
-    
     lineaSeparadora()
     print("  Estaciones de \(linea):")
     for (index, estacion) in estaciones.enumerated() {
@@ -153,7 +224,6 @@ func seleccionarEstacion(titulo: String) -> String? {
     lineaSeparadora()
     print("  Elige el número de la estación:")
     print("  ➤ ", terminator: "")
-    
     if let entrada = readLine(), let indice = Int(entrada), indice >= 1, indice <= estaciones.count {
         return estaciones[indice - 1]
     } else {
@@ -187,132 +257,17 @@ func buscarInfoEstacion(_ entrada: String) {
         } else {
             print("No conecta directamente con el Metropolitano.")
         }
+        // ★ NUEVO 1: mostrar puntos de interés cercanos
+        let puntos = puntosDeInteresPorEstacion[nombreReal] ?? []
+        if puntos.isEmpty {
+            print("Puntos de interés cercanos: sin datos registrados aún.")
+        } else {
+            print("Puntos de interés cercanos: \(puntos.joined(separator: ", "))")
+        }
+        // ★ NUEVO 2: mostrar tiempo a la siguiente estación
+        print(tiempoASiguienteEstacion(nombreReal))
     } else {
         print("Estación no encontrada en la base de datos.")
     }
 }
 
-// ===== PLANIFICADOR DE RUTAS =====
-func planearRuta(_ origenEntrada: String, _ destinoEntrada: String) {
-    let claveOrigen = normalizar(origenEntrada)
-    let claveDestino = normalizar(destinoEntrada)
-
-    guard let nombreOrigen = estacionesNormalizadas[claveOrigen],
-          let origen = detalleEstaciones[nombreOrigen] else {
-        print("No se encontró la estación de origen.")
-        return
-    }
-    guard let nombreDestino = estacionesNormalizadas[claveDestino],
-          let destino = detalleEstaciones[nombreDestino] else {
-        print("No se encontró la estación de destino.")
-        return
-    }
-
-    if origen.linea == destino.linea {
-        print("Toma la \(origen.linea) directamente: \(origen.nombre) → \(destino.nombre)")
-    } else {
-        var transbordoEncontrado = false
-        for (estacion, descripcion) in interconexionesEntreLineas {
-            if descripcion.contains(origen.linea) && descripcion.contains(destino.linea) {
-                print("Ruta sugerida:")
-                print("  1. Toma \(origen.linea) desde \(origen.nombre) hasta \(estacion)")
-                print("  2. Haz transbordo en \(estacion)")
-                print("  3. Continúa en \(destino.linea) hasta \(destino.nombre)")
-                transbordoEncontrado = true
-                break
-            }
-        }
-        if !transbordoEncontrado {
-            print("No hay un transbordo directo conocido entre \(origen.linea) y \(destino.linea) en este sistema.")
-        }
-    }
-
-    if let conexion = destino.conectaMetropolitano {
-        print("Dato extra: \(destino.nombre) conecta con el Metropolitano → \(conexion)")
-    }
-}
-
-// ===== INTERFAZ DE CONSOLA =====
-func lineaSeparadora() {
-    print(String(repeating: "─", count: 50))
-}
-
-func mostrarMenu() {
-    print("""
-    
-    ┌─────────────────────────────────────────┐
-    │        METRO DE LIMA · CONSOLA          │
-    └─────────────────────────────────────────┘
-      🚉  1 · Estaciones por línea
-      🔍  2 · Buscar una estación
-      🔄  3 · Conexiones con el Metropolitano
-      🗺️  4 · Planear ruta entre dos estaciones
-      🚪  5 · Salir
-    -------------------------------------------
-    """)
-    print("   Elige una opción ➜ ", terminator: "")
-}
-
-// ===== MENÚ PRINCIPAL =====
-var opcion = ""
-repeat {
-    mostrarMenu()
-    opcion = readLine() ?? ""
-
-    switch opcion {
-    case "1":
-        lineaSeparadora()
-        print("   ¿Qué línea deseas consultar? (Línea 1 / Línea 2 / Línea 3)")
-        print("   ➤ ", terminator: "")
-        let linea = readLine() ?? ""
-        lineaSeparadora()
-        mostrarEstacionesDeLinea(linea)
-        lineaSeparadora()
-
-    case "2":
-        lineaSeparadora()
-        print("   🔍 BUSCAR INFORMACIÓN DE ESTACIÓN")
-        if let estacionSeleccionada = seleccionarEstacion(titulo: "Selecciona la estación a consultar:") {
-            lineaSeparadora()
-            buscarInfoEstacion(estacionSeleccionada)
-        }
-        lineaSeparadora()
-
-    case "3":
-        lineaSeparadora()
-        print("   🔄  CONEXIONES CON EL METROPOLITANO")
-        lineaSeparadora()
-        for (estacionMetro, conexion) in conexionesMetropolitano {
-            print("   • \(estacionMetro) → \(conexion)")
-        }
-        lineaSeparadora()
-
-    case "4":
-        lineaSeparadora()
-        print("   🗺️ PLANIFICADOR DE RUTAS")
-        lineaSeparadora()
-        print("   Primero, elige tu estación de ORIGEN:")
-        guard let origen = seleccionarEstacion(titulo: "Origen del viaje") else {
-            lineaSeparadora()
-            break
-        }
-        
-        lineaSeparadora()
-        print("   Ahora, elige tu estación de DESTINO:")
-        guard let destino = seleccionarEstacion(titulo: "Destino del viaje") else {
-            lineaSeparadora()
-            break
-        }
-        
-        lineaSeparadora()
-        planearRuta(origen, destino)
-        lineaSeparadora()
-
-    case "5":
-        print("\n   ¡Gracias por usar el sistema! 👋\n")
-
-    default:
-        print("\n   ⚠️  Opción no válida, intenta de nuevo.\n")
-    }
-
-} while opcion != "5"
