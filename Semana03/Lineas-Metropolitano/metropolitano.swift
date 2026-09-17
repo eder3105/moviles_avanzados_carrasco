@@ -332,3 +332,257 @@ func planearRuta(_ origenEntrada: String, _ destinoEntrada: String) {
         print("Dato extra: \(destino.nombre) conecta con el Metropolitano → \(conexion)")
     }
 }
+
+// ★ NUEVO 3: cuenta cuántas estaciones hay entre dos estaciones de la misma línea
+func estacionesEntre(_ origen: String, _ destino: String, linea: String) -> Int {
+    guard let estaciones = estacionesPorLinea[linea],
+          let i1 = estaciones.firstIndex(of: origen),
+          let i2 = estaciones.firstIndex(of: destino) else { return 0 }
+    return abs(i2 - i1)
+}
+
+// ============================================================
+// ★★★ NUEVO (parte B): MENÚ DE TARJETA DE TRANSPORTE ★★★
+// ============================================================
+func menuTarjeta() {
+    lineaSeparadora()
+    print("   💳 TARJETA DE TRANSPORTE")
+    lineaSeparadora()
+    print("   Saldo actual: S/ \(String(format: "%.2f", tarjetaUsuario.saldo))")
+    print("   1 · Recargar")
+    print("   2 · Simular pago de pasaje (S/ \(String(format: "%.2f", tarjetaUsuario.tarifa)))")
+    print("   3 · Volver")
+    print("   ➤ ", terminator: "")
+    switch readLine() ?? "" {
+    case "1":
+        print("   Ingresa el monto a recargar: ")
+        print("   ➤ ", terminator: "")
+        if let entrada = readLine(), let monto = Double(entrada), monto > 0 {
+            tarjetaUsuario.recargar(monto: monto)
+            print("   ✅ Recarga exitosa. Nuevo saldo: S/ \(String(format: "%.2f", tarjetaUsuario.saldo))")
+        } else {
+            print("   ⚠️ Monto no válido.")
+        }
+    case "2":
+        if tarjetaUsuario.pagarPasaje() {
+            print("   ✅ Pasaje cobrado. Saldo restante: S/ \(String(format: "%.2f", tarjetaUsuario.saldo))")
+        } else {
+            print("   ⚠️ Saldo insuficiente. Recarga tu tarjeta.")
+        }
+    default:
+        break
+    }
+    lineaSeparadora()
+}
+
+// ============================================================
+// ★★★ NUEVO: MODO ADMINISTRADOR (sin contraseña) ★★★
+// Permite: agregar estación a una línea existente, crear una línea
+// completamente nueva, y editar una estación ya creada.
+// ============================================================
+func modoAdministrador() {
+    lineaSeparadora()
+    print("   🛠️ MODO ADMINISTRADOR")
+    lineaSeparadora()
+    print("   1 · Agregar estación a una línea existente")
+    print("   2 · Crear una línea completamente nueva")
+    print("   3 · Editar una estación existente")
+    print("   4 · Volver")
+    print("   ➤ ", terminator: "")
+    switch readLine() ?? "" {
+    case "1":
+        guard let linea = seleccionarLinea() else { return }
+        agregarEstacion(aLinea: linea)
+    case "2":
+        crearLineaNueva()
+    case "3":
+        if let estacion = seleccionarEstacion(titulo: "Selecciona la estación a editar:") {
+            editarEstacion(estacion)
+        }
+    default:
+        break
+    }
+    lineaSeparadora()
+}
+
+// ★ NUEVO: pide los datos de una estación por consola y la registra
+func agregarEstacion(aLinea linea: String) {
+    print("   Nombre de la nueva estación: ")
+    print("   ➤ ", terminator: "")
+    let nombre = readLine() ?? "Estación sin nombre"
+
+    print("   ¿Tiene ascensor? (s/n): ")
+    print("   ➤ ", terminator: "")
+    let ascensor = (readLine() ?? "n").lowercased() == "s"
+
+    print("   Vías cercanas (separadas por coma): ")
+    print("   ➤ ", terminator: "")
+    let vias = (readLine() ?? "").split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+
+    print("   ¿Conecta con el Metropolitano? (dejar vacío si no): ")
+    print("   ➤ ", terminator: "")
+    let conexionTexto = readLine() ?? ""
+    let conexion: String? = conexionTexto.isEmpty ? nil : conexionTexto
+
+    print("   Puntos de interés cercanos (separados por coma, opcional): ")
+    print("   ➤ ", terminator: "")
+    let puntosTexto = readLine() ?? ""
+    let puntos = puntosTexto.isEmpty ? [] : puntosTexto.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+
+    let nueva = Estacion(nombre: nombre, linea: linea, tieneAscensor: ascensor, viasCercanas: vias, conectaMetropolitano: conexion)
+    detalleEstaciones[nombre] = nueva
+    estacionesPorLinea[linea, default: []].append(nombre)
+    if !puntos.isEmpty { puntosDeInteresPorEstacion[nombre] = puntos }
+    actualizarNormalizados()
+
+    print("   ✅ Estación '\(nombre)' agregada a \(linea).")
+}
+
+// ★ NUEVO: crea una línea nueva vacía y permite agregarle estaciones
+func crearLineaNueva() {
+    print("   Nombre de la nueva línea (ej. Línea 4): ")
+    print("   ➤ ", terminator: "")
+    let nombreLinea = readLine() ?? "Línea nueva"
+
+    if estacionesPorLinea[nombreLinea] != nil {
+        print("   ⚠️ Esa línea ya existe.")
+        return
+    }
+    estacionesPorLinea[nombreLinea] = []
+    actualizarNormalizados()
+    print("   ✅ Línea '\(nombreLinea)' creada. Ahora agrega sus estaciones:")
+
+    var seguir = true
+    while seguir {
+        agregarEstacion(aLinea: nombreLinea)
+        print("   ¿Agregar otra estación a \(nombreLinea)? (s/n): ")
+        print("   ➤ ", terminator: "")
+        seguir = (readLine() ?? "n").lowercased() == "s"
+    }
+}
+
+// ★ NUEVO: el admin puede editar una estación ya creada (ascensor,
+// vías, conexión Metropolitano y puntos de interés)
+func editarEstacion(_ nombre: String) {
+    guard let actual = detalleEstaciones[nombre] else {
+        print("   ⚠️ Estación no encontrada.")
+        return
+    }
+
+    print("   ¿Tiene ascensor? (s/n) [actual: \(actual.tieneAscensor ? "s" : "n")]: ")
+    print("   ➤ ", terminator: "")
+    let ascensor = (readLine() ?? (actual.tieneAscensor ? "s" : "n")).lowercased() == "s"
+
+    print("   Vías cercanas separadas por coma [actual: \(actual.viasCercanas.joined(separator: ", "))]: ")
+    print("   ➤ ", terminator: "")
+    let viasEntrada = readLine() ?? ""
+    let vias = viasEntrada.isEmpty ? actual.viasCercanas : viasEntrada.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+
+    print("   Conexión Metropolitano (vacío = sin cambio, 'ninguna' = quitar): ")
+    print("   ➤ ", terminator: "")
+    let conexionEntrada = readLine() ?? ""
+    var conexion = actual.conectaMetropolitano
+    if conexionEntrada.lowercased() == "ninguna" { conexion = nil }
+    else if !conexionEntrada.isEmpty { conexion = conexionEntrada }
+
+    print("   Puntos de interés separados por coma (vacío = sin cambio): ")
+    print("   ➤ ", terminator: "")
+    let puntosEntrada = readLine() ?? ""
+    if !puntosEntrada.isEmpty {
+        puntosDeInteresPorEstacion[nombre] = puntosEntrada.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+    }
+
+    detalleEstaciones[nombre] = Estacion(nombre: actual.nombre, linea: actual.linea, tieneAscensor: ascensor, viasCercanas: vias, conectaMetropolitano: conexion)
+    print("   ✅ Estación '\(nombre)' actualizada.")
+}
+
+// ===== INTERFAZ DE CONSOLA =====
+func lineaSeparadora() {
+    print(String(repeating: "─", count: 50))
+}
+
+func mostrarMenu() {
+    print("""
+    
+    ┌─────────────────────────────────────────┐
+    │        METRO DE LIMA · CONSOLA          │
+    └─────────────────────────────────────────┘
+      🚉  1 · Estaciones por línea
+      🔍  2 · Buscar una estación
+      🔄  3 · Conexiones con el Metropolitano
+      🗺️  4 · Planear ruta entre dos estaciones
+      💳  5 · Tarjeta de transporte
+      🛠️  6 · Modo administrador
+      🚪  7 · Salir
+    -------------------------------------------
+    """)
+    print("   Elige una opción ➜ ", terminator: "")
+}
+
+// ===== MENÚ PRINCIPAL =====
+var opcion = ""
+repeat {
+    mostrarMenu()
+    opcion = readLine() ?? ""
+
+    switch opcion {
+    case "1":
+        lineaSeparadora()
+        print("   ¿Qué línea deseas consultar? (Línea 1 / Línea 2 / Línea 3)")
+        print("   ➤ ", terminator: "")
+        let linea = readLine() ?? ""
+        lineaSeparadora()
+        mostrarEstacionesDeLinea(linea)
+        lineaSeparadora()
+
+    case "2":
+        lineaSeparadora()
+        print("   🔍 BUSCAR INFORMACIÓN DE ESTACIÓN")
+        if let estacionSeleccionada = seleccionarEstacion(titulo: "Selecciona la estación a consultar:") {
+            lineaSeparadora()
+            buscarInfoEstacion(estacionSeleccionada)
+        }
+        lineaSeparadora()
+
+    case "3":
+        lineaSeparadora()
+        print("   🔄  CONEXIONES CON EL METROPOLITANO")
+        lineaSeparadora()
+        for (estacionMetro, conexion) in conexionesMetropolitano {
+            print("   • \(estacionMetro) → \(conexion)")
+        }
+        lineaSeparadora()
+
+    case "4":
+        lineaSeparadora()
+        print("   🗺️ PLANIFICADOR DE RUTAS")
+        lineaSeparadora()
+        print("   Primero, elige tu estación de ORIGEN:")
+        guard let origen = seleccionarEstacion(titulo: "Origen del viaje") else {
+            lineaSeparadora()
+            break
+        }
+        lineaSeparadora()
+        print("   Ahora, elige tu estación de DESTINO:")
+        guard let destino = seleccionarEstacion(titulo: "Destino del viaje") else {
+            lineaSeparadora()
+            break
+        }
+        lineaSeparadora()
+        planearRuta(origen, destino)
+        lineaSeparadora()
+
+    case "5":
+        menuTarjeta()
+
+    case "6":
+        modoAdministrador()
+
+    case "7":
+        print("\n   ¡Gracias por usar el sistema! 👋\n")
+
+    default:
+        print("\n   ⚠️  Opción no válida, intenta de nuevo.\n")
+    }
+
+} while opcion != "7"
