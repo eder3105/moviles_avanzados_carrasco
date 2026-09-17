@@ -94,6 +94,7 @@ let detalleEstaciones: [String: Estacion] = [
     "Los Héroes": Estacion(nombre: "Los Héroes", linea: "Línea 3", tieneAscensor: true, viasCercanas: ["Av. Los Héroes", "Santiago de Surco"], conectaMetropolitano: nil),
     "Pedro Miotta": Estacion(nombre: "Pedro Miotta", linea: "Línea 3", tieneAscensor: true, viasCercanas: ["San Juan de Miraflores"], conectaMetropolitano: nil)
 ]
+
 // ===== DICCIONARIO 3: Conexiones con el Metropolitano =====
 let conexionesMetropolitano: [String: String] = [
     "La Cultura": "Estación Corpac (Metropolitano) — Línea 1",
@@ -118,6 +119,49 @@ func normalizar(_ texto: String) -> String {
 // Diccionarios normalizados
 let lineasNormalizadas: [String: String] = Dictionary(uniqueKeysWithValues: estacionesPorLinea.keys.map { (normalizar($0), $0) })
 let estacionesNormalizadas: [String: String] = Dictionary(uniqueKeysWithValues: detalleEstaciones.keys.map { (normalizar($0), $0) })
+
+// ===== FUNCIONES DE SELECCIÓN GUIADA =====
+func seleccionarLinea() -> String? {
+    print("\n  ¿A qué línea pertenece?")
+    print("    1 · Línea 1")
+    print("    2 · Línea 2")
+    print("    3 · Línea 3 (Proyecto)")
+    print("  ➤ ", terminator: "")
+    
+    let opcion = readLine() ?? ""
+    switch opcion {
+    case "1": return "Línea 1"
+    case "2": return "Línea 2"
+    case "3": return "Línea 3"
+    default:
+        print("  ⚠️ Línea no válida.")
+        return nil
+    }
+}
+
+func seleccionarEstacion(titulo: String) -> String? {
+    print("\n  \(titulo)")
+    guard let linea = seleccionarLinea(), let estaciones = estacionesPorLinea[linea] else {
+        return nil
+    }
+    
+    lineaSeparadora()
+    print("  Estaciones de \(linea):")
+    for (index, estacion) in estaciones.enumerated() {
+        print("    [\(index + 1)] \(estacion)")
+    }
+    lineaSeparadora()
+    print("  Elige el número de la estación:")
+    print("  ➤ ", terminator: "")
+    
+    if let entrada = readLine(), let indice = Int(entrada), indice >= 1, indice <= estaciones.count {
+        return estaciones[indice - 1]
+    } else {
+        print("  ⚠️ Número de estación no válido.")
+        return nil
+    }
+}
+
 // ===== FUNCIONES DE CONSULTA =====
 func mostrarEstacionesDeLinea(_ entrada: String) {
     let clave = normalizar(entrada)
@@ -147,6 +191,7 @@ func buscarInfoEstacion(_ entrada: String) {
         print("Estación no encontrada en la base de datos.")
     }
 }
+
 // ===== PLANIFICADOR DE RUTAS =====
 func planearRuta(_ origenEntrada: String, _ destinoEntrada: String) {
     let claveOrigen = normalizar(origenEntrada)
@@ -186,6 +231,7 @@ func planearRuta(_ origenEntrada: String, _ destinoEntrada: String) {
         print("Dato extra: \(destino.nombre) conecta con el Metropolitano → \(conexion)")
     }
 }
+
 // ===== INTERFAZ DE CONSOLA =====
 func lineaSeparadora() {
     print(String(repeating: "─", count: 50))
@@ -225,11 +271,11 @@ repeat {
 
     case "2":
         lineaSeparadora()
-        print("   Escribe el nombre de la estación:")
-        print("   ➤ ", terminator: "")
-        let nombre = readLine() ?? ""
-        lineaSeparadora()
-        buscarInfoEstacion(nombre)
+        print("   🔍 BUSCAR INFORMACIÓN DE ESTACIÓN")
+        if let estacionSeleccionada = seleccionarEstacion(titulo: "Selecciona la estación a consultar:") {
+            lineaSeparadora()
+            buscarInfoEstacion(estacionSeleccionada)
+        }
         lineaSeparadora()
 
     case "3":
@@ -243,12 +289,21 @@ repeat {
 
     case "4":
         lineaSeparadora()
-        print("   Estación de ORIGEN:")
-        print("   ➤ ", terminator: "")
-        let origen = readLine() ?? ""
-        print("   Estación de DESTINO:")
-        print("   ➤ ", terminator: "")
-        let destino = readLine() ?? ""
+        print("   🗺️ PLANIFICADOR DE RUTAS")
+        lineaSeparadora()
+        print("   Primero, elige tu estación de ORIGEN:")
+        guard let origen = seleccionarEstacion(titulo: "Origen del viaje") else {
+            lineaSeparadora()
+            break
+        }
+        
+        lineaSeparadora()
+        print("   Ahora, elige tu estación de DESTINO:")
+        guard let destino = seleccionarEstacion(titulo: "Destino del viaje") else {
+            lineaSeparadora()
+            break
+        }
+        
         lineaSeparadora()
         planearRuta(origen, destino)
         lineaSeparadora()
