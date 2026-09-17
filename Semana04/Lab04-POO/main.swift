@@ -76,7 +76,7 @@ class SucursalOutlet: Sucursal {
     }
 }
 
-// --- TODO 18: SucursalOnline (Prueba de polimorfismo sin tocar cotizar ni bucles) ---
+// --- TODO 18: SucursalOnline (Prueba de polimorfismo) ---
 class SucursalOnline: Sucursal {
     override func costoEnvio(monto: Double) -> Double {
         return 15.0
