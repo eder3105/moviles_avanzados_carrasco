@@ -123,3 +123,50 @@ func registrarClienteJuridico(contador: Int) -> ClienteJuridico {
         representanteLegal: repLegal
     )
 }
+
+func ejecutarSistema() {
+    var listaClientes: [Cliente] = []
+    var contador = 1
+    
+    while true {
+        print("\n==========================================")
+        print("🏦 SISTEMA DE GESTIÓN BANCARIA DE CLIENTES")
+        print("[1] Registrar Cliente Natural")
+        print("[2] Registrar Cliente Jurídico")
+        print("[3] Mostrar lista de clientes registrados")
+        print("[0] Salir")
+        print("==========================================")
+        
+        let opcion = leerTexto(prompt: "Seleccione una opción:")
+        
+        switch opcion {
+        case "1":
+            let cliente = registrarClienteNatural(contador: contador)
+            listaClientes.append(cliente)
+            contador += 1
+            print("✅ Cliente Natural registrado con éxito.")
+        case "2":
+            let cliente = registrarClienteJuridico(contador: contador)
+            listaClientes.append(cliente)
+            contador += 1
+            print("✅ Cliente Jurídico registrado con éxito.")
+        case "3":
+            if listaClientes.isEmpty {
+                print("\n⚠️ No hay clientes registrados en el sistema.")
+            } else {
+                print("\n--- LISTA DE CLIENTES REGISTRADOS ---")
+                for cliente in listaClientes {
+                    cliente.mostrarDatos()
+                    print("------------------------------------------")
+                }
+            }
+        case "0":
+            print("\n👋 ¡Gracias por usar el sistema!")
+            return
+        default:
+            print("⚠️ Opción no válida. Intente nuevamente.")
+        }
+    }
+}
+
+ejecutarSistema()
