@@ -271,3 +271,64 @@ func buscarInfoEstacion(_ entrada: String) {
     }
 }
 
+// ★ NUEVO 2: calcula el tiempo hasta la siguiente estación de la misma línea
+func tiempoASiguienteEstacion(_ nombreEstacion: String) -> String {
+    guard let info = detalleEstaciones[nombreEstacion],
+          let estaciones = estacionesPorLinea[info.linea],
+          let idx = estaciones.firstIndex(of: nombreEstacion) else {
+        return "No se pudo calcular el tiempo a la siguiente estación."
+    }
+    if idx == estaciones.count - 1 {
+        return "\(nombreEstacion) es la última estación de \(info.linea)."
+    }
+    let siguiente = estaciones[idx + 1]
+    let minutos = tiemposEntreEstaciones["\(nombreEstacion)-\(siguiente)"] ?? minutosPorDefecto
+    return "Tiempo estimado hasta \(siguiente): \(minutos) min (simulado)."
+}
+
+// ===== PLANIFICADOR DE RUTAS =====
+func planearRuta(_ origenEntrada: String, _ destinoEntrada: String) {
+    let claveOrigen = normalizar(origenEntrada)
+    let claveDestino = normalizar(destinoEntrada)
+
+    guard let nombreOrigen = estacionesNormalizadas[claveOrigen],
+          let origen = detalleEstaciones[nombreOrigen] else {
+        print("No se encontró la estación de origen.")
+        return
+    }
+    guard let nombreDestino = estacionesNormalizadas[claveDestino],
+          let destino = detalleEstaciones[nombreDestino] else {
+        print("No se encontró la estación de destino.")
+        return
+    }
+
+    if origen.linea == destino.linea {
+        print("Toma la \(origen.linea) directamente: \(origen.nombre) → \(destino.nombre)")
+        // ★ NUEVO 3: cuántas estaciones faltan para llegar
+        let faltan = estacionesEntre(nombreOrigen, nombreDestino, linea: origen.linea)
+        print("Te faltan \(faltan) estación(es) para llegar a tu destino.")
+    } else {
+        var transbordoEncontrado = false
+        for (estacion, descripcion) in interconexionesEntreLineas {
+            if descripcion.contains(origen.linea) && descripcion.contains(destino.linea) {
+                print("Ruta sugerida:")
+                print("  1. Toma \(origen.linea) desde \(origen.nombre) hasta \(estacion)")
+                print("  2. Haz transbordo en \(estacion)")
+                print("  3. Continúa en \(destino.linea) hasta \(destino.nombre)")
+                // ★ NUEVO 3: conteo de estaciones en cada tramo
+                let tramo1 = estacionesEntre(nombreOrigen, estacion, linea: origen.linea)
+                let tramo2 = estacionesEntre(estacion, nombreDestino, linea: destino.linea)
+                print("Te faltan \(tramo1) estación(es) hasta el transbordo y \(tramo2) más tras el transbordo (total: \(tramo1 + tramo2)).")
+                transbordoEncontrado = true
+                break
+            }
+        }
+        if !transbordoEncontrado {
+            print("No hay un transbordo directo conocido entre \(origen.linea) y \(destino.linea) en este sistema.")
+        }
+    }
+
+    if let conexion = destino.conectaMetropolitano {
+        print("Dato extra: \(destino.nombre) conecta con el Metropolitano → \(conexion)")
+    }
+}
