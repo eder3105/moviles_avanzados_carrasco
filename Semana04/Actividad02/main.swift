@@ -87,3 +87,39 @@ func capturarDatosBase(codigoDefecto: String) -> (codigo: String, direccion: Str
     
     return (codigoFinal, direccion, fecha, cuenta, monto)
 }
+
+func registrarClienteNatural(contador: Int) -> ClienteNatural {
+    print("\n--- REGISTRO DE CLIENTE NATURAL ---")
+    let nombre = leerTexto(prompt: "Nombre completo:")
+    let dni = leerTexto(prompt: "DNI:")
+    let base = capturarDatosBase(codigoDefecto: "C00\(contador)")
+    
+    return ClienteNatural(
+        codigo: base.codigo,
+        direccion: base.direccion,
+        fechaDeRegistro: base.fecha,
+        numeroCuenta: base.cuenta,
+        montoMinimoApertura: base.monto,
+        nombreCompleto: nombre,
+        dni: dni
+    )
+}
+
+func registrarClienteJuridico(contador: Int) -> ClienteJuridico {
+    print("\n--- REGISTRO DE CLIENTE JURÍDICO ---")
+    let razonSocial = leerTexto(prompt: "Razón Social:")
+    let ruc = leerTexto(prompt: "RUC:")
+    let repLegal = leerTexto(prompt: "Representante Legal:")
+    let base = capturarDatosBase(codigoDefecto: "C00\(contador)")
+    
+    return ClienteJuridico(
+        codigo: base.codigo,
+        direccion: base.direccion,
+        fechaDeRegistro: base.fecha,
+        numeroCuenta: base.cuenta,
+        montoMinimoApertura: base.monto,
+        razonSocial: razonSocial,
+        ruc: ruc,
+        representanteLegal: repLegal
+    )
+}
