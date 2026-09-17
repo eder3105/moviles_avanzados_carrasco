@@ -116,3 +116,54 @@ func mostrarCatalogo() {
     print("[0] Finalizar selección de cursos y generar factura")
 }
 
+func ejecutarSistema() {
+    print("\n--- SISTEMA DE FACTURACIÓN TECSUP ---")
+    let nombre = leerTexto(prompt: "Ingrese el nombre del estudiante:")
+    let dni = leerTexto(prompt: "Ingrese el DNI:")
+    
+    var esTecsup = false
+    while true {
+        let resp = leerTexto(prompt: "¿Es alumno de Tecsup? (s/n):").lowercased()
+        if resp == "s" || resp == "si" {
+            esTecsup = true
+            break
+        } else if resp == "n" || resp == "no" {
+            esTecsup = false
+            break
+        }
+        print("⚠️ Responda con 's' o 'n'.")
+    }
+    
+    let estudiante = Estudiante(nombre: nombre, dni: dni, esAlumnoTecsup: esTecsup)
+    var compras: [CursoComprado] = []
+    
+    while true {
+        mostrarCatalogo()
+        let opcion = leerEntero(prompt: "\nSeleccione la opción del curso:")
+        
+        if opcion == 0 {
+            if compras.isEmpty {
+                print("⚠️ Debe seleccionar al menos un curso antes de generar la factura.")
+                continue
+            }
+            break
+        }
+        
+        if let cursoSeleccionado = catalogoCursos.first(where: { $0.id == opcion }) {
+            let cantidad = leerEntero(prompt: "Ingrese la cantidad para '\(cursoSeleccionado.nombre)':")
+            if cantidad > 0 {
+                compras.append(CursoComprado(curso: cursoSeleccionado, cantidad: cantidad))
+                print("✅ '\(cursoSeleccionado.nombre)' (x\(cantidad)) agregado a la compra.")
+            } else {
+                print("⚠️ La cantidad debe ser mayor a 0.")
+            }
+        } else {
+            print("⚠️ Opción no válida. Elija un número de la lista.")
+        }
+    }
+    
+    let factura = Factura(estudiante: estudiante, cursos: compras)
+    factura.imprimirFactura()
+}
+
+ejecutarSistema()
