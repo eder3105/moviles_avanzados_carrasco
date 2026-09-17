@@ -107,3 +107,79 @@ print("===== Licuadora (S/ 250.0) =====")
 for sucursal in sucursales {
     sucursal.cotizar(item: licuadora)
 }
+
+// ===== CASO 2: PARTE A - BIBLIOTECA (SIN IA) =====
+// Docente: Juan León
+
+enum EstadoLibro {
+    case disponible, prestado
+}
+
+struct Libro {
+    let titulo: String
+    let autor: String
+    var estado: EstadoLibro = .disponible
+}
+
+class Biblioteca {
+    var libros: [Libro] = []
+    
+    func agregar(libro: Libro) {
+        libros.append(libro)
+    }
+    
+    func prestar(titulo: String) -> Bool {
+        for i in 0..<libros.count {
+            if libros[i].titulo == titulo {
+                if libros[i].estado == .disponible {
+                    libros[i].estado = .prestado
+                    print("Préstamo aprobado: \(titulo)")
+                    return true
+                } else {
+                    print("Error: \(titulo) ya está prestado")
+                    return false
+                }
+            }
+        }
+        print("Error: no existe \(titulo)")
+        return false
+    }
+    
+    func devolver(titulo: String) -> Bool {
+        for i in 0..<libros.count {
+            if libros[i].titulo == titulo {
+                if libros[i].estado == .prestado {
+                    libros[i].estado = .disponible
+                    print("Devolución registrada: \(titulo)")
+                    return true
+                } else {
+                    print("Error: \(titulo) ya se encuentra disponible")
+                    return false
+                }
+            }
+        }
+        print("Error: no existe \(titulo)")
+        return false
+    }
+    
+    func inventario() {
+        print("===== INVENTARIO =====")
+        for libro in libros {
+            let estadoTexto = (libro.estado == .prestado) ? "prestado" : "disponible"
+            print("\(libro.titulo) (\(libro.autor))\n\(estadoTexto)")
+        }
+    }
+}
+
+// Simulación solicitada
+let miBiblioteca = Biblioteca()
+miBiblioteca.agregar(libro: Libro(titulo: "Cien años de soledad", autor: "Gabriel García Márquez"))
+miBiblioteca.agregar(libro: Libro(libro: "La ciudad y los perros", autor: "Mario Vargas Llosa"))
+miBiblioteca.agregar(libro: Libro(titulo: "El Quijote", autor: "Miguel de Cervantes"))
+
+miBiblioteca.prestar(titulo: "La ciudad y los perros")
+miBiblioteca.prestar(titulo: "La ciudad y los perros") 
+miBiblioteca.devolver(titulo: "La ciudad y los perros")
+miBiblioteca.prestar(titulo: "El Quijote")
+miBiblioteca.prestar(titulo: "El Principito") 
+miBiblioteca.inventario()
