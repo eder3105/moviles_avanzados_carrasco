@@ -62,3 +62,28 @@ class ClienteJuridico: Cliente {
         super.mostrarDatos()
     }
 }
+
+func leerTexto(prompt: String) -> String {
+    print(prompt, terminator: " ")
+    return readLine()?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+}
+
+func leerDouble(prompt: String) -> Double {
+    while true {
+        if let valor = Double(leerTexto(prompt: prompt)), valor >= 0 {
+            return valor
+        }
+        print("⚠️ Ingrese un monto válido.")
+    }
+}
+
+func capturarDatosBase(codigoDefecto: String) -> (codigo: String, direccion: String, fecha: String, cuenta: String, monto: Double) {
+    let codigo = leerTexto(prompt: "Código (\(codigoDefecto)):")
+    let codigoFinal = codigo.isEmpty ? codigoDefecto : codigo
+    let direccion = leerTexto(prompt: "Dirección:")
+    let fecha = leerTexto(prompt: "Fecha de registro (AAAA-MM-DD):")
+    let cuenta = leerTexto(prompt: "Número de cuenta:")
+    let monto = leerDouble(prompt: "Monto mínimo de apertura (S/):")
+    
+    return (codigoFinal, direccion, fecha, cuenta, monto)
+}
