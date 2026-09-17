@@ -93,3 +93,26 @@ extension Factura {
         print("==========================================")
     }
 }
+
+func leerTexto(prompt: String) -> String {
+    print(prompt, terminator: " ")
+    return readLine()?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+}
+
+func leerEntero(prompt: String) -> Int {
+    while true {
+        if let input = Int(leerTexto(prompt: prompt)), input >= 0 {
+            return input
+        }
+        print("⚠️ Entrada inválida. Ingrese un número entero válido.")
+    }
+}
+
+func mostrarCatalogo() {
+    print("\n--- CATÁLOGO DE CURSOS DISPONIBLES ---")
+    for curso in catalogoCursos {
+        print(String(format: "[%d] %@ - S/ %.2f", curso.id, curso.nombre, curso.precioUnitario))
+    }
+    print("[0] Finalizar selección de cursos y generar factura")
+}
+
