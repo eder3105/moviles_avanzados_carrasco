@@ -61,3 +61,35 @@ struct Factura {
         return totalConIGV - descuentoCantidad - descuentoTecsup
     }
 }
+
+extension Factura {
+    func imprimirFactura() {
+        print("\n==========================================")
+        print("🎓 FACTURA DE CURSOS")
+        print("Estudiante: \(estudiante.nombre)")
+        print("DNI: \(estudiante.dni)")
+        print("Alumno de Tecsup: \(estudiante.esAlumnoTecsup ? "Sí ✅" : "No ❌")")
+        print("------------------------------------------")
+        
+        for item in cursos {
+            let linea = String(format: "%-20@ x%-2d - S/ %7.2f", item.curso.nombre, item.cantidad, item.total)
+            print(linea)
+        }
+        
+        print("------------------------------------------")
+        print(String(format: "Subtotal: S/ %.2f", subtotal))
+        print(String(format: "IGV (18%%): S/ %.2f", igv))
+        print(String(format: "Total con IGV: S/ %.2f", totalConIGV))
+        
+        if descuentoCantidad > 0 {
+            print(String(format: "Descuento 10%% por cantidad: -S/ %.2f ✅", descuentoCantidad))
+        }
+        if descuentoTecsup > 0 {
+            print(String(format: "Descuento especial Tecsup: -S/ %.2f ✅", descuentoTecsup))
+        }
+        
+        print("------------------------------------------")
+        print(String(format: "💰 TOTAL FINAL A PAGAR: S/ %.2f", totalFinal))
+        print("==========================================")
+    }
+}
