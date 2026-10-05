@@ -7,32 +7,32 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		CD6DAB4D307454AC006BE65F /* Semana05_IMC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Semana05_IMC.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD6DAB6E30745CAF006BE65F /* Semana05_Prestamos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Semana05_Prestamos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		CD6DAB5F307454AC006BE65F /* Exceptions for "Semana05_IMC" folder in "Semana05_IMC" target */ = {
+		CD6DAB8030745CB1006BE65F /* Exceptions for "Semana05_Prestamos" folder in "Semana05_Prestamos" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = CD6DAB4C307454AC006BE65F /* Semana05_IMC */;
+			target = CD6DAB6D30745CAF006BE65F /* Semana05_Prestamos */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		CD6DAB4F307454AC006BE65F /* Semana05_IMC */ = {
+		CD6DAB7030745CAF006BE65F /* Semana05_Prestamos */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				CD6DAB5F307454AC006BE65F /* Exceptions for "Semana05_IMC" folder in "Semana05_IMC" target */,
+				CD6DAB8030745CB1006BE65F /* Exceptions for "Semana05_Prestamos" folder in "Semana05_Prestamos" target */,
 			);
-			path = Semana05_IMC;
+			path = Semana05_Prestamos;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		CD6DAB4A307454AC006BE65F /* Frameworks */ = {
+		CD6DAB6B30745CAF006BE65F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -42,18 +42,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		CD6DAB44307454AC006BE65F = {
+		CD6DAB6530745CAF006BE65F = {
 			isa = PBXGroup;
 			children = (
-				CD6DAB4F307454AC006BE65F /* Semana05_IMC */,
-				CD6DAB4E307454AC006BE65F /* Products */,
+				CD6DAB7030745CAF006BE65F /* Semana05_Prestamos */,
+				CD6DAB6F30745CAF006BE65F /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		CD6DAB4E307454AC006BE65F /* Products */ = {
+		CD6DAB6F30745CAF006BE65F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CD6DAB4D307454AC006BE65F /* Semana05_IMC.app */,
+				CD6DAB6E30745CAF006BE65F /* Semana05_Prestamos.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,64 +61,64 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CD6DAB4C307454AC006BE65F /* Semana05_IMC */ = {
+		CD6DAB6D30745CAF006BE65F /* Semana05_Prestamos */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CD6DAB60307454AC006BE65F /* Build configuration list for PBXNativeTarget "Semana05_IMC" */;
+			buildConfigurationList = CD6DAB8130745CB1006BE65F /* Build configuration list for PBXNativeTarget "Semana05_Prestamos" */;
 			buildPhases = (
-				CD6DAB49307454AC006BE65F /* Sources */,
-				CD6DAB4A307454AC006BE65F /* Frameworks */,
-				CD6DAB4B307454AC006BE65F /* Resources */,
+				CD6DAB6A30745CAF006BE65F /* Sources */,
+				CD6DAB6B30745CAF006BE65F /* Frameworks */,
+				CD6DAB6C30745CAF006BE65F /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				CD6DAB4F307454AC006BE65F /* Semana05_IMC */,
+				CD6DAB7030745CAF006BE65F /* Semana05_Prestamos */,
 			);
-			name = Semana05_IMC;
+			name = Semana05_Prestamos;
 			packageProductDependencies = (
 			);
-			productName = Semana05_IMC;
-			productReference = CD6DAB4D307454AC006BE65F /* Semana05_IMC.app */;
+			productName = Semana05_Prestamos;
+			productReference = CD6DAB6E30745CAF006BE65F /* Semana05_Prestamos.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		CD6DAB45307454AC006BE65F /* Project object */ = {
+		CD6DAB6630745CAF006BE65F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2630;
 				LastUpgradeCheck = 2630;
 				TargetAttributes = {
-					CD6DAB4C307454AC006BE65F = {
+					CD6DAB6D30745CAF006BE65F = {
 						CreatedOnToolsVersion = 26.3;
 					};
 				};
 			};
-			buildConfigurationList = CD6DAB48307454AC006BE65F /* Build configuration list for PBXProject "Semana05_IMC" */;
+			buildConfigurationList = CD6DAB6930745CAF006BE65F /* Build configuration list for PBXProject "Semana05_Prestamos" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = CD6DAB44307454AC006BE65F;
+			mainGroup = CD6DAB6530745CAF006BE65F;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = CD6DAB4E307454AC006BE65F /* Products */;
+			productRefGroup = CD6DAB6F30745CAF006BE65F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CD6DAB4C307454AC006BE65F /* Semana05_IMC */,
+				CD6DAB6D30745CAF006BE65F /* Semana05_Prestamos */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		CD6DAB4B307454AC006BE65F /* Resources */ = {
+		CD6DAB6C30745CAF006BE65F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -128,7 +128,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		CD6DAB49307454AC006BE65F /* Sources */ = {
+		CD6DAB6A30745CAF006BE65F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -138,7 +138,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		CD6DAB61307454AC006BE65F /* Debug */ = {
+		CD6DAB8230745CB1006BE65F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -146,7 +146,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Semana05_IMC/Info.plist;
+				INFOPLIST_FILE = Semana05_Prestamos/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -157,7 +157,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.tecsup.Semana05-IMC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.tecsup.Semana05-Prestamos";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -169,7 +169,7 @@
 			};
 			name = Debug;
 		};
-		CD6DAB62307454AC006BE65F /* Release */ = {
+		CD6DAB8330745CB1006BE65F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -177,7 +177,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Semana05_IMC/Info.plist;
+				INFOPLIST_FILE = Semana05_Prestamos/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -188,7 +188,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.tecsup.Semana05-IMC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.tecsup.Semana05-Prestamos";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -200,7 +200,7 @@
 			};
 			name = Release;
 		};
-		CD6DAB63307454AC006BE65F /* Debug */ = {
+		CD6DAB8430745CB1006BE65F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -263,7 +263,7 @@
 			};
 			name = Debug;
 		};
-		CD6DAB64307454AC006BE65F /* Release */ = {
+		CD6DAB8530745CB1006BE65F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -322,25 +322,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CD6DAB48307454AC006BE65F /* Build configuration list for PBXProject "Semana05_IMC" */ = {
+		CD6DAB6930745CAF006BE65F /* Build configuration list for PBXProject "Semana05_Prestamos" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CD6DAB63307454AC006BE65F /* Debug */,
-				CD6DAB64307454AC006BE65F /* Release */,
+				CD6DAB8430745CB1006BE65F /* Debug */,
+				CD6DAB8530745CB1006BE65F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CD6DAB60307454AC006BE65F /* Build configuration list for PBXNativeTarget "Semana05_IMC" */ = {
+		CD6DAB8130745CB1006BE65F /* Build configuration list for PBXNativeTarget "Semana05_Prestamos" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CD6DAB61307454AC006BE65F /* Debug */,
-				CD6DAB62307454AC006BE65F /* Release */,
+				CD6DAB8230745CB1006BE65F /* Debug */,
+				CD6DAB8330745CB1006BE65F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = CD6DAB45307454AC006BE65F /* Project object */;
+	rootObject = CD6DAB6630745CAF006BE65F /* Project object */;
 }
