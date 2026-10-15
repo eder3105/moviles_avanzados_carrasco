@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NAV-001">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="scn-nav">
+            <objects>
+                <navigationController id="NAV-001" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="NAV-BAR">
+                        <rect key="frame" x="0.0" y="62" width="393" height="116"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="LST-001" kind="relationship" relationship="rootViewController" id="seg-root"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fr-nav" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-700" y="0.0"/>
+        </scene>
+        <!--Culturas Peruanas-->
+        <scene sceneID="scn-list">
+            <objects>
+                <viewController id="LST-001" customClass="ViewController" customModule="CulturasPeruanas" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="LST-VIEW">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="100" estimatedRowHeight="-1" sectionHeaderHeight="-1" sectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="LST-TABLE">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="celda" rowHeight="100" id="CELL-001" customClass="CulturaTableViewCell" customModule="CulturasPeruanas" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="178" width="393" height="100"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="CELL-001" id="CELL-CV">
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="100"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="CELL-IMG">
+                                                    <rect key="frame" x="16" y="10" width="110" height="80"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="110" id="cn-img-w"/>
+                                                        <constraint firstAttribute="height" constant="80" id="cn-img-h"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nombre de la cultura" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CELL-LBL">
+                                                    <rect key="frame" x="142" y="39.666666666666664" width="205" height="21"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="CELL-IMG" firstAttribute="leading" secondItem="CELL-CV" secondAttribute="leading" constant="16" id="cn-c1"/>
+                                                <constraint firstItem="CELL-IMG" firstAttribute="centerY" secondItem="CELL-CV" secondAttribute="centerY" id="cn-c2"/>
+                                                <constraint firstItem="CELL-LBL" firstAttribute="leading" secondItem="CELL-IMG" secondAttribute="trailing" constant="16" id="cn-c3"/>
+                                                <constraint firstItem="CELL-LBL" firstAttribute="centerY" secondItem="CELL-CV" secondAttribute="centerY" id="cn-c4"/>
+                                                <constraint firstAttribute="trailing" secondItem="CELL-LBL" secondAttribute="trailing" constant="16" id="cn-c5"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="imgCultura" destination="CELL-IMG" id="ol-img"/>
+                                            <outlet property="lblNombre" destination="CELL-LBL" id="ol-lbl"/>
+                                            <segue destination="ELM-001" kind="show" identifier="mostrarElementos" id="seg-elementos"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="LST-001" id="ol-ds"/>
+                                    <outlet property="delegate" destination="LST-001" id="ol-dg"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="LST-SA"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="LST-TABLE" firstAttribute="top" secondItem="LST-VIEW" secondAttribute="top" id="cn-t1"/>
+                            <constraint firstItem="LST-TABLE" firstAttribute="leading" secondItem="LST-SA" secondAttribute="leading" id="cn-t2"/>
+                            <constraint firstItem="LST-SA" firstAttribute="trailing" secondItem="LST-TABLE" secondAttribute="trailing" id="cn-t3"/>
+                            <constraint firstItem="LST-VIEW" firstAttribute="bottom" secondItem="LST-TABLE" secondAttribute="bottom" id="cn-t4"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Culturas Peruanas" id="LST-NAVITEM"/>
+                    <connections>
+                        <outlet property="tableView" destination="LST-TABLE" id="ol-tv"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fr-list" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="100" y="0.0"/>
+        </scene>
+        <!--Elementos-->
+        <scene sceneID="scn-elm">
+            <objects>
+                <viewController id="ELM-001" customClass="ElementosViewController" customModule="CulturasPeruanas" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ELM-VIEW">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="240" estimatedRowHeight="-1" sectionHeaderHeight="-1" sectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="ELM-TABLE">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="celdaElemento" rowHeight="240" id="ECELL-001" customClass="ElementoTableViewCell" customModule="CulturasPeruanas" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="50" width="393" height="240"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ECELL-001" id="ECELL-CV">
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="240"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ECELL-IMG">
+                                                    <rect key="frame" x="16" y="8" width="361" height="180"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="180" id="cn-e-h"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Título" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ECELL-LBL">
+                                                    <rect key="frame" x="16" y="196" width="361" height="26"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="ECELL-IMG" firstAttribute="top" secondItem="ECELL-CV" secondAttribute="top" constant="8" id="cn-e1"/>
+                                                <constraint firstItem="ECELL-IMG" firstAttribute="leading" secondItem="ECELL-CV" secondAttribute="leading" constant="16" id="cn-e2"/>
+                                                <constraint firstAttribute="trailing" secondItem="ECELL-IMG" secondAttribute="trailing" constant="16" id="cn-e3"/>
+                                                <constraint firstItem="ECELL-LBL" firstAttribute="top" secondItem="ECELL-IMG" secondAttribute="bottom" constant="8" id="cn-e4"/>
+                                                <constraint firstItem="ECELL-LBL" firstAttribute="leading" secondItem="ECELL-CV" secondAttribute="leading" constant="16" id="cn-e5"/>
+                                                <constraint firstAttribute="trailing" secondItem="ECELL-LBL" secondAttribute="trailing" constant="16" id="cn-e6"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="imgElemento" destination="ECELL-IMG" id="ol-e1"/>
+                                            <outlet property="lblTitulo" destination="ECELL-LBL" id="ol-e2"/>
+                                            <segue destination="DET-001" kind="show" identifier="mostrarDetalle" id="seg-detalle"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="ELM-001" id="ol-eds"/>
+                                    <outlet property="delegate" destination="ELM-001" id="ol-edg"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="ELM-SA"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="ELM-TABLE" firstAttribute="top" secondItem="ELM-SA" secondAttribute="top" id="cn-et1"/>
+                            <constraint firstItem="ELM-TABLE" firstAttribute="leading" secondItem="ELM-SA" secondAttribute="leading" id="cn-et2"/>
+                            <constraint firstItem="ELM-SA" firstAttribute="trailing" secondItem="ELM-TABLE" secondAttribute="trailing" id="cn-et3"/>
+                            <constraint firstItem="ELM-VIEW" firstAttribute="bottom" secondItem="ELM-TABLE" secondAttribute="bottom" id="cn-et4"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Elementos" largeTitleDisplayMode="never" id="ELM-NAVITEM"/>
+                    <connections>
+                        <outlet property="tableView" destination="ELM-TABLE" id="ol-etv"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fr-elm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="900" y="0.0"/>
+        </scene>
+        <!--Detalle del Elemento-->
+        <scene sceneID="scn-det">
+            <objects>
+                <viewController id="DET-001" customClass="DetalleElementoViewController" customModule="CulturasPeruanas" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="DET-VIEW">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="DET-IMG">
+                                <rect key="frame" x="0.0" y="103" width="393" height="260"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="260" id="cn-d-h"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Título" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DET-NOM">
+                                <rect key="frame" x="16" y="379" width="361" height="34"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" selectable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="DET-DES">
+                                <rect key="frame" x="16" y="425" width="361" height="393"/>
+                                <string key="text">Descripción</string>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="DET-SA"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="DET-IMG" firstAttribute="top" secondItem="DET-SA" secondAttribute="top" id="cn-d1"/>
+                            <constraint firstItem="DET-IMG" firstAttribute="leading" secondItem="DET-VIEW" secondAttribute="leading" id="cn-d2"/>
+                            <constraint firstAttribute="trailing" secondItem="DET-IMG" secondAttribute="trailing" id="cn-d3"/>
+                            <constraint firstItem="DET-NOM" firstAttribute="top" secondItem="DET-IMG" secondAttribute="bottom" constant="16" id="cn-d4"/>
+                            <constraint firstItem="DET-NOM" firstAttribute="leading" secondItem="DET-VIEW" secondAttribute="leading" constant="16" id="cn-d5"/>
+                            <constraint firstAttribute="trailing" secondItem="DET-NOM" secondAttribute="trailing" constant="16" id="cn-d6"/>
+                            <constraint firstItem="DET-DES" firstAttribute="top" secondItem="DET-NOM" secondAttribute="bottom" constant="12" id="cn-d10"/>
+                            <constraint firstItem="DET-DES" firstAttribute="leading" secondItem="DET-VIEW" secondAttribute="leading" constant="16" id="cn-d11"/>
+                            <constraint firstAttribute="trailing" secondItem="DET-DES" secondAttribute="trailing" constant="16" id="cn-d12"/>
+                            <constraint firstItem="DET-SA" firstAttribute="bottom" secondItem="DET-DES" secondAttribute="bottom" constant="8" id="cn-d13"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Detalle" largeTitleDisplayMode="never" id="DET-NAVITEM"/>
+                    <connections>
+                        <outlet property="imgElemento" destination="DET-IMG" id="ol-d1"/>
+                        <outlet property="lblTitulo" destination="DET-NOM" id="ol-d2"/>
+                        <outlet property="txtDescripcion" destination="DET-DES" id="ol-d4"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fr-det" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1700" y="0.0"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="secondaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
