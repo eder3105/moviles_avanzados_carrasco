@@ -17,6 +17,20 @@ struct MenuPrincipal: View {
                     } label: {
                         Label("Cálculo de CTS", systemImage: "banknote")
                     }
+
+                    NavigationLink {
+                        PagoInstructoresView()
+                    } label: {
+                        Label("Pago de instructores", systemImage: "person.crop.rectangle")
+                    }
+                }
+
+                Section("Trabajo grupal") {
+                    NavigationLink {
+                        CuentasView()
+                    } label: {
+                        Label("Cuentas por cobrar y por pagar", systemImage: "chart.bar.doc.horizontal")
+                    }
                 }
             }
             .navigationTitle("Menú Principal")
