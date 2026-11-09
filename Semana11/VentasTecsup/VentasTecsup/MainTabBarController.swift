@@ -18,10 +18,12 @@ class MainTabBarController: UITabBarController {
 
         if Sesion.shared.esSupervisor {
             viewControllers = [
+                pestana(ProductosViewController(), "Productos", "shippingbox.fill"),
                 pestana(CuentaViewController(), "Cuenta", "person.crop.circle")
             ]
         } else {
             viewControllers = [
+                pestana(ProductosViewController(), "Productos", "shippingbox.fill"),
                 pestana(CuentaViewController(), "Cuenta", "person.crop.circle")
             ]
         }
