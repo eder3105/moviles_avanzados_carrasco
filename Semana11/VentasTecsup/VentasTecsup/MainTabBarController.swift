@@ -18,6 +18,7 @@ class MainTabBarController: UITabBarController {
 
         if Sesion.shared.esSupervisor {
             viewControllers = [
+                pestana(VentasEquipoViewController(), "Ventas", "list.bullet.rectangle"),
                 pestana(ProductosViewController(), "Productos", "shippingbox.fill"),
                 pestana(ClientesViewController(), "Clientes", "person.2.fill"),
                 pestana(CuentaViewController(), "Cuenta", "person.crop.circle")
