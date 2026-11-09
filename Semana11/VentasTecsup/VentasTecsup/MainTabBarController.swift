@@ -26,6 +26,7 @@ class MainTabBarController: UITabBarController {
             viewControllers = [
                 pestana(ProductosViewController(), "Productos", "shippingbox.fill"),
                 pestana(ClientesViewController(), "Clientes", "person.2.fill"),
+                pestana(NuevaVentaViewController(), "Venta", "cart.badge.plus"),
                 pestana(CuentaViewController(), "Cuenta", "person.crop.circle")
             ]
         }
