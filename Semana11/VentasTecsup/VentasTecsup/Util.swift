@@ -35,9 +35,20 @@ private let formatoFecha: DateFormatter = {
     return f
 }()
 
+private let formatoFechaCorta: DateFormatter = {
+    let f = DateFormatter()
+    f.dateFormat = "dd/MM HH:mm"
+    return f
+}()
+
 func textoFecha(_ fecha: Date?) -> String {
     guard let fecha = fecha else { return "" }
     return formatoFecha.string(from: fecha)
+}
+
+func textoFechaCorta(_ fecha: Date?) -> String {
+    guard let fecha = fecha else { return "" }
+    return formatoFechaCorta.string(from: fecha)
 }
 
 func inicioDeHoy() -> Date {
@@ -63,6 +74,17 @@ extension Venta {
     // Texto corto: "Cliente · Producto x2"
     var descripcion: String {
         return "\(cliente?.nombre ?? "—") · \(producto?.nombre ?? "—") x\(cantidad)"
+    }
+
+    // Subtotal = precio unitario x cantidad
+    var subtotal: Double {
+        return redondear(precioUnitario * Double(cantidad))
+    }
+
+    // Número del comprobante, a partir del id interno de Core Data (ej. V-000012)
+    var numero: String {
+        let digitos = objectID.uriRepresentation().lastPathComponent.filter { $0.isNumber }
+        return String(format: "V-%06d", Int(digitos) ?? 0)
     }
 }
 
@@ -92,53 +114,38 @@ func buscarVentas(vendedor: Usuario?, desde: Date?, cliente: String) -> [Venta] 
     return (try? contexto().fetch(req)) ?? []
 }
 
-// Configura una fila de venta. Si está anulada: texto tachado y etiqueta ANULADA.
-func configurarCeldaVenta(_ celda: UITableViewCell, _ venta: Venta, mostrarVendedor: Bool) {
-    var detalle = "\(textoFecha(venta.fecha)) · \(soles(venta.total))"
-    if mostrarVendedor {
-        detalle = "Vendedor: \(venta.vendedor?.nombre ?? "—") · " + detalle
-    }
-    if venta.anulada {
-        celda.textLabel?.attributedText = NSAttributedString(
-            string: venta.descripcion,
-            attributes: [.strikethroughStyle: NSUnderlineStyle.single.rawValue,
-                         .foregroundColor: UIColor.secondaryLabel])
-        detalle += "\nMotivo: \(venta.motivoAnulacion ?? "")"
-        let etiqueta = UILabel()
-        etiqueta.text = "ANULADA"
-        etiqueta.font = .boldSystemFont(ofSize: 12)
-        etiqueta.textColor = .systemRed
-        etiqueta.sizeToFit()
-        celda.accessoryView = etiqueta
-    } else {
-        celda.textLabel?.attributedText = nil
-        celda.textLabel?.text = venta.descripcion
-        celda.textLabel?.textColor = .label
-        celda.accessoryView = nil
-    }
-    celda.detailTextLabel?.text = detalle
-    celda.detailTextLabel?.numberOfLines = 0
-    celda.selectionStyle = .none
-}
-
 // MARK: - Ayudas de interfaz
 func crearCampo(_ placeholder: String, seguro: Bool = false) -> UITextField {
     let campo = UITextField()
     campo.placeholder = placeholder
-    campo.borderStyle = .roundedRect
+    campo.borderStyle = .none
+    campo.backgroundColor = Tema.tarjeta
+    campo.layer.cornerRadius = 12
+    campo.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 14, height: 1))
+    campo.leftViewMode = .always
     campo.autocapitalizationType = .none
     campo.autocorrectionType = .no
     campo.isSecureTextEntry = seguro
-    campo.heightAnchor.constraint(equalToConstant: 44).isActive = true
+    campo.heightAnchor.constraint(equalToConstant: 50).isActive = true
     return campo
 }
 
 func crearTitulo(_ texto: String) -> UILabel {
     let etiqueta = UILabel()
-    etiqueta.text = texto
-    etiqueta.font = .boldSystemFont(ofSize: 15)
+    etiqueta.text = texto.uppercased()
+    etiqueta.font = .systemFont(ofSize: 13, weight: .semibold)
     etiqueta.textColor = .secondaryLabel
     return etiqueta
+}
+
+// Botón azul grande y redondeado
+func crearBotonPrincipal(_ titulo: String) -> UIButton {
+    var configuracion = UIButton.Configuration.filled()
+    configuracion.title = titulo
+    configuracion.cornerStyle = .large
+    configuracion.buttonSize = .large
+    configuracion.baseBackgroundColor = Tema.principal
+    return UIButton(configuration: configuracion)
 }
 
 // Color del stock: verde > 10, ámbar 6 a 10, rojo 5 o menos
@@ -148,13 +155,13 @@ func colorStock(_ stock: Int64) -> UIColor {
     return .systemRed
 }
 
-// Círculo con las iniciales del cliente
-func imagenIniciales(_ nombre: String) -> UIImage {
+// Círculo de color con las iniciales (cliente o vendedor)
+func imagenIniciales(_ nombre: String, color: UIColor = Tema.principal) -> UIImage {
     let iniciales = nombre.split(separator: " ").prefix(2)
         .compactMap { $0.first }.map { String($0) }.joined().uppercased()
     let tam = CGSize(width: 40, height: 40)
     return UIGraphicsImageRenderer(size: tam).image { _ in
-        UIColor.systemBlue.setFill()
+        color.setFill()
         UIBezierPath(ovalIn: CGRect(origin: .zero, size: tam)).fill()
         let atributos: [NSAttributedString.Key: Any] = [.font: UIFont.boldSystemFont(ofSize: 15),
                                                          .foregroundColor: UIColor.white]
@@ -165,23 +172,6 @@ func imagenIniciales(_ nombre: String) -> UIImage {
     }
 }
 
-// Cabecera (o pie) para una tabla con controles apilados
-func crearCabecera(_ vistas: [UIView]) -> UIView {
-    let pila = UIStackView(arrangedSubviews: vistas)
-    pila.axis = .vertical
-    pila.spacing = 8
-    pila.translatesAutoresizingMaskIntoConstraints = false
-    let alto = CGFloat(vistas.count) * 44 + 16
-    let contenedor = UIView(frame: CGRect(x: 0, y: 0, width: 320, height: alto))
-    contenedor.addSubview(pila)
-    NSLayoutConstraint.activate([
-        pila.leadingAnchor.constraint(equalTo: contenedor.leadingAnchor, constant: 16),
-        pila.trailingAnchor.constraint(equalTo: contenedor.trailingAnchor, constant: -16),
-        pila.topAnchor.constraint(equalTo: contenedor.topAnchor, constant: 8)
-    ])
-    return contenedor
-}
-
 extension UIViewController {
     func mostrarAlerta(_ titulo: String, _ mensaje: String) {
         let alerta = UIAlertController(title: titulo, message: mensaje, preferredStyle: .alert)
@@ -189,22 +179,71 @@ extension UIViewController {
         present(alerta, animated: true)
     }
 
-    // Coloca las vistas una debajo de otra y oculta el teclado al tocar fuera
+    // Coloca las vistas una debajo de otra (con scroll) y oculta el teclado al tocar fuera
     @discardableResult
     func montarPila(_ vistas: [UIView]) -> UIStackView {
+        let scroll = UIScrollView()
+        scroll.translatesAutoresizingMaskIntoConstraints = false
+        scroll.keyboardDismissMode = .interactive
+        view.addSubview(scroll)
+
         let pila = UIStackView(arrangedSubviews: vistas)
         pila.axis = .vertical
         pila.spacing = 14
         pila.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(pila)
+        scroll.addSubview(pila)
+
         NSLayoutConstraint.activate([
-            pila.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            pila.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 24),
-            pila.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -24)
+            scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scroll.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scroll.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scroll.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            pila.topAnchor.constraint(equalTo: scroll.contentLayoutGuide.topAnchor, constant: 24),
+            pila.leadingAnchor.constraint(equalTo: scroll.contentLayoutGuide.leadingAnchor, constant: 24),
+            pila.trailingAnchor.constraint(equalTo: scroll.contentLayoutGuide.trailingAnchor, constant: -24),
+            pila.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor, constant: -24),
+            pila.widthAnchor.constraint(equalTo: scroll.frameLayoutGuide.widthAnchor, constant: -48)
         ])
+
         let toque = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing(_:)))
         toque.cancelsTouchesInView = false
         view.addGestureRecognizer(toque)
         return pila
+    }
+}
+
+// Cabecera de tabla con controles apilados (chips, indicadores...)
+extension UITableView {
+    func ponerCabecera(_ vistas: [UIView]) {
+        let pila = UIStackView(arrangedSubviews: vistas)
+        pila.axis = .vertical
+        pila.spacing = 12
+        pila.translatesAutoresizingMaskIntoConstraints = false
+
+        let contenedor = UIView(frame: CGRect(x: 0, y: 0, width: 400, height: 10))
+        contenedor.addSubview(pila)
+        let abajo = pila.bottomAnchor.constraint(equalTo: contenedor.bottomAnchor, constant: -4)
+        abajo.priority = .defaultHigh
+        let derecha = pila.trailingAnchor.constraint(equalTo: contenedor.trailingAnchor, constant: -20)
+        derecha.priority = .defaultHigh
+        NSLayoutConstraint.activate([
+            pila.topAnchor.constraint(equalTo: contenedor.topAnchor, constant: 8),
+            pila.leadingAnchor.constraint(equalTo: contenedor.leadingAnchor, constant: 20),
+            derecha,
+            abajo
+        ])
+        tableHeaderView = contenedor
+    }
+
+    // Llamar desde viewDidLayoutSubviews para que la cabecera tome su alto real
+    func ajustarCabecera() {
+        guard let cabecera = tableHeaderView, bounds.width > 0 else { return }
+        let tam = cabecera.systemLayoutSizeFitting(CGSize(width: bounds.width, height: 0),
+                                                   withHorizontalFittingPriority: .required,
+                                                   verticalFittingPriority: .fittingSizeLevel)
+        if abs(cabecera.frame.height - tam.height) > 0.5 || abs(cabecera.frame.width - bounds.width) > 0.5 {
+            cabecera.frame = CGRect(x: 0, y: 0, width: bounds.width, height: tam.height)
+            tableHeaderView = cabecera
+        }
     }
 }

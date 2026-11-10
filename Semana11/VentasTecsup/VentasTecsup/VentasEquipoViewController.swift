@@ -13,6 +13,14 @@ class VentasEquipoViewController: UITableViewController, UISearchResultsUpdating
     private let periodo = UISegmentedControl(items: ["Todas", "Hoy", "Mes"])
     private let buscador = UISearchController(searchResultsController: nil)
 
+    init() {
+        super.init(style: .insetGrouped)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) no se usa")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         definesPresentationContext = true
@@ -20,21 +28,18 @@ class VentasEquipoViewController: UITableViewController, UISearchResultsUpdating
         chips.addTarget(self, action: #selector(cargar), for: .valueChanged)
         periodo.selectedSegmentIndex = 0
         periodo.addTarget(self, action: #selector(cargar), for: .valueChanged)
-        tableView.tableHeaderView = crearCabecera([chips, periodo])
-
-        // ④ Nota de la relación
-        let nota = UILabel()
-        nota.text = "Nota: el vendedor de cada fila se obtiene con la relación venta ▸ vendedor (To One)."
-        nota.font = .systemFont(ofSize: 12)
-        nota.textColor = .secondaryLabel
-        nota.numberOfLines = 0
-        tableView.tableFooterView = crearCabecera([nota])
+        tableView.ponerCabecera([crearTitulo("Vendedor"), chips, crearTitulo("Periodo"), periodo])
 
         buscador.searchResultsUpdater = self
         buscador.obscuresBackgroundDuringPresentation = false
         buscador.searchBar.placeholder = "Buscar por cliente"
         navigationItem.searchController = buscador
         navigationItem.hidesSearchBarWhenScrolling = false
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.ajustarCabecera()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -77,12 +82,26 @@ class VentasEquipoViewController: UITableViewController, UISearchResultsUpdating
         return ventas.count
     }
 
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        let vacio = ventas.isEmpty ? "No hay ventas para mostrar.\n\n" : ""
+        // ④ Nota de la relación
+        return vacio + "Desliza una venta a la izquierda para anularla. Toca una venta para ver su comprobante.\n"
+            + "El vendedor de cada fila se obtiene con la relación venta ▸ vendedor (To One)."
+    }
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let celda = tableView.dequeueReusableCell(withIdentifier: "celda")
             ?? UITableViewCell(style: .subtitle, reuseIdentifier: "celda")
         // ② Muestra el nombre del vendedor
         configurarCeldaVenta(celda, ventas[indexPath.row], mostrarVendedor: true)
         return celda
+    }
+
+    // Tocar una venta: ver su comprobante
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let boleta = BoletaViewController(venta: ventas[indexPath.row])
+        present(UINavigationController(rootViewController: boleta), animated: true)
     }
 
     // ③ Deslizar para Anular (solo supervisor y solo ventas no anuladas)
@@ -97,6 +116,7 @@ class VentasEquipoViewController: UITableViewController, UISearchResultsUpdating
             terminado(true)
         }
         anular.backgroundColor = .systemRed
+        anular.image = UIImage(systemName: "xmark.circle")
         return UISwipeActionsConfiguration(actions: [anular])
     }
 
@@ -104,7 +124,7 @@ class VentasEquipoViewController: UITableViewController, UISearchResultsUpdating
     private func pedirAnulacion(_ venta: Venta) {
         let resumen = """
         Cliente: \(venta.cliente?.nombre ?? "—")
-        Producto: \(venta.producto?.nombre ?? "—") x\(venta.cantidad)
+        Producto: \(venta.producto?.nombre ?? "—") × \(venta.cantidad)
         Vendedor: \(venta.vendedor?.nombre ?? "—")
         Total: \(soles(venta.total))
 

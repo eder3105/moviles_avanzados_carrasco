@@ -12,6 +12,14 @@ class ProductosViewController: UITableViewController, UISearchResultsUpdating {
     private let chips = UISegmentedControl()
     private let buscador = UISearchController(searchResultsController: nil)
 
+    init() {
+        super.init(style: .insetGrouped)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) no se usa")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         definesPresentationContext = true
@@ -25,13 +33,18 @@ class ProductosViewController: UITableViewController, UISearchResultsUpdating {
 
         // ③ Chips de categoría
         chips.addTarget(self, action: #selector(cargar), for: .valueChanged)
-        tableView.tableHeaderView = crearCabecera([chips])
+        tableView.ponerCabecera([chips])
 
         // ① Botón + solo para el supervisor
         if Sesion.shared.esSupervisor {
             navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self,
                                                                 action: #selector(nuevoProducto))
         }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.ajustarCabecera()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -81,20 +94,39 @@ class ProductosViewController: UITableViewController, UISearchResultsUpdating {
         return productos.count
     }
 
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        if productos.isEmpty { return "No hay productos para mostrar." }
+        return Sesion.shared.esSupervisor
+            ? "Toca un producto para editarlo. Desliza a la izquierda para borrarlo (no se puede si tiene ventas)."
+            : "Solo el supervisor puede crear, editar o borrar productos."
+    }
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let celda = tableView.dequeueReusableCell(withIdentifier: "celda")
             ?? UITableViewCell(style: .subtitle, reuseIdentifier: "celda")
         let p = productos[indexPath.row]
-        celda.textLabel?.text = p.nombre
-        celda.detailTextLabel?.text = "\(p.categoria ?? "") · \(soles(p.precio))"
 
-        // ④ Stock en color
-        let etiqueta = UILabel()
-        etiqueta.text = "Stock \(p.stock)"
-        etiqueta.font = .boldSystemFont(ofSize: 14)
-        etiqueta.textColor = colorStock(p.stock)
-        etiqueta.sizeToFit()
-        celda.accessoryView = etiqueta
+        var c = celda.defaultContentConfiguration()
+        // Ícono del producto en un cuadrado del color de su categoría (decoración)
+        c.image = imagenIcono(iconoProducto(p), color: colorCategoria(p.categoria))
+        c.imageProperties.maximumSize = CGSize(width: 42, height: 42)
+        c.text = p.nombre
+        c.textProperties.font = .systemFont(ofSize: 16, weight: .semibold)
+        c.secondaryText = p.categoria
+        c.secondaryTextProperties.color = .secondaryLabel
+        celda.contentConfiguration = c
+
+        // Precio en texto oscuro y ④ stock en etiqueta sólida de su color (verde, ámbar o rojo)
+        let precio = UILabel()
+        precio.text = soles(p.precio)
+        precio.font = .systemFont(ofSize: 16, weight: .bold)
+        celda.accessoryView = columnaEtiquetas([precio,
+                                                Etiqueta("Stock \(p.stock)", color: colorStock(p.stock), solida: true)])
+
+        // Si queda poco stock (5 o menos), toda la fila se pinta de rojo suave como alerta
+        var fondo = celda.defaultBackgroundConfiguration()
+        fondo.backgroundColor = p.stock <= 5 ? UIColor.systemRed.withAlphaComponent(0.12) : Tema.tarjeta
+        celda.backgroundConfiguration = fondo
         celda.selectionStyle = Sesion.shared.esSupervisor ? .default : .none
         return celda
     }

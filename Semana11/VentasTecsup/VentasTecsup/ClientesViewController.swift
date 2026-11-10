@@ -5,15 +5,33 @@ import CoreData
 // ① Botón + · ② Fila con iniciales, nombre, documento y total comprado
 // ③ Categoría y total calculados con las ventas no anuladas
 // Vendedor: crear, editar y consultar · Supervisor: además borrar
-class ClientesViewController: UITableViewController {
+class ClientesViewController: UITableViewController, UISearchResultsUpdating {
 
     private var clientes: [Cliente] = []
+    private let buscador = UISearchController(searchResultsController: nil)
+
+    init() {
+        super.init(style: .insetGrouped)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) no se usa")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        definesPresentationContext = true
+
         // ① Botón + (ambos roles pueden crear)
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self,
                                                             action: #selector(nuevoCliente))
+
+        // Búsqueda por nombre o documento
+        buscador.searchResultsUpdater = self
+        buscador.obscuresBackgroundDuringPresentation = false
+        buscador.searchBar.placeholder = "Buscar por nombre o documento"
+        navigationItem.searchController = buscador
+        navigationItem.hidesSearchBarWhenScrolling = false
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -23,9 +41,17 @@ class ClientesViewController: UITableViewController {
 
     private func cargar() {
         let req: NSFetchRequest<Cliente> = Cliente.fetchRequest()
+        let texto = buscador.searchBar.text ?? ""
+        if !texto.isEmpty {
+            req.predicate = NSPredicate(format: "nombre CONTAINS[cd] %@ OR documento CONTAINS[cd] %@", texto, texto)
+        }
         req.sortDescriptors = [NSSortDescriptor(key: "nombre", ascending: true)]
         clientes = (try? contexto().fetch(req)) ?? []
         tableView.reloadData()
+    }
+
+    func updateSearchResults(for searchController: UISearchController) {
+        cargar()
     }
 
     // MARK: - Tabla
@@ -33,15 +59,40 @@ class ClientesViewController: UITableViewController {
         return clientes.count
     }
 
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        if clientes.isEmpty { return "No hay clientes para mostrar." }
+        // ③ Nota de la maqueta
+        return "Categoría y «comprado» se calculan con las ventas no anuladas; no se guardan."
+    }
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let celda = tableView.dequeueReusableCell(withIdentifier: "celda")
             ?? UITableViewCell(style: .subtitle, reuseIdentifier: "celda")
-        let c = clientes[indexPath.row]
-        // ② Iniciales, nombre, documento y total comprado · ③ Categoría calculada
-        celda.imageView?.image = imagenIniciales(c.nombre ?? "")
-        celda.textLabel?.text = c.nombre
-        celda.detailTextLabel?.text = "Doc. \(c.documento ?? "") · Comprado \(soles(Reglas.totalComprado(c))) · \(Reglas.categoria(c).rawValue)"
-        celda.detailTextLabel?.numberOfLines = 0
+        let cliente = clientes[indexPath.row]
+        let categoria = Reglas.categoria(cliente)
+
+        // ② Iniciales, nombre, documento y total comprado
+        var c = celda.defaultContentConfiguration()
+        c.image = imagenIniciales(cliente.nombre ?? "", color: categoria.color)
+        c.imageProperties.maximumSize = CGSize(width: 40, height: 40)
+        c.text = cliente.nombre
+        c.textProperties.font = .systemFont(ofSize: 16, weight: .semibold)
+        c.secondaryText = "Doc. \(cliente.documento ?? "")"
+        c.secondaryTextProperties.color = .secondaryLabel
+        celda.contentConfiguration = c
+
+        // ③ Total comprado en texto oscuro y categoría en etiqueta sólida
+        //    (VIP dorado, Frecuente azul, Regular gris)
+        let comprado = UILabel()
+        comprado.text = soles(Reglas.totalComprado(cliente))
+        comprado.font = .systemFont(ofSize: 15, weight: .bold)
+        celda.accessoryView = columnaEtiquetas([comprado,
+                                                Etiqueta(categoria.rawValue, color: categoria.color, solida: true)])
+
+        // Los clientes VIP tienen toda la fila en dorado suave
+        var fondo = celda.defaultBackgroundConfiguration()
+        fondo.backgroundColor = categoria == .vip ? Tema.ambar.withAlphaComponent(0.15) : Tema.tarjeta
+        celda.backgroundConfiguration = fondo
         return celda
     }
 

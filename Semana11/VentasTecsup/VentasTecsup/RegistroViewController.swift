@@ -16,7 +16,7 @@ class RegistroViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Crear cuenta"
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = Tema.fondo
 
         txtNombre.autocapitalizationType = .words
         txtUsuario.addTarget(self, action: #selector(revisarUsuario), for: .editingChanged)
@@ -27,12 +27,17 @@ class RegistroViewController: UIViewController {
 
         selectorRol.selectedSegmentIndex = 0
 
-        let btnRegistrar = UIButton(configuration: .filled())
-        btnRegistrar.setTitle("Registrarme", for: .normal)
+        let btnRegistrar = crearBotonPrincipal("Registrarme")
         btnRegistrar.addTarget(self, action: #selector(registrar), for: .touchUpInside)
 
-        montarPila([txtNombre, txtUsuario, lblAviso, txtClave, txtConfirmar,
-                    crearTitulo("Rol"), selectorRol, btnRegistrar])
+        let pila = montarPila([crearTitulo("Datos personales"), txtNombre,
+                               crearTitulo("Acceso"), txtUsuario, lblAviso, txtClave, txtConfirmar,
+                               crearTitulo("Rol"), selectorRol, btnRegistrar])
+        pila.setCustomSpacing(8, after: pila.arrangedSubviews[0])
+        pila.setCustomSpacing(24, after: txtNombre)
+        pila.setCustomSpacing(8, after: pila.arrangedSubviews[2])
+        pila.setCustomSpacing(24, after: txtConfirmar)
+        pila.setCustomSpacing(30, after: selectorRol)
     }
 
     // Usuario único sin distinguir mayúsculas: "lparedes" y "LPAREDES" son el mismo
